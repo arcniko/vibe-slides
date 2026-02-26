@@ -5,18 +5,10 @@ An agent skill for creating stunning, zero-dependency HTML presentations — fro
 ## Install
 
 ```bash
-npx skills add arcniko/vibe-slides
+git clone https://github.com/arcniko/vibe-slides.git /tmp/vibe-slides && cp -r /tmp/vibe-slides/skills/* ~/.claude/skills/ && rm -rf /tmp/vibe-slides
 ```
 
-Then invoke with `/vibe-slides` in your agent.
-
-### Manual install (Claude Code)
-
-```bash
-git clone https://github.com/arcniko/vibe-slides.git /tmp/vibe-slides
-mv /tmp/vibe-slides/skills/vibe-slides ~/.claude/skills/
-rm -rf /tmp/vibe-slides
-```
+Then use `/vibe-slides` in Claude Code.
 
 ## What it does
 
