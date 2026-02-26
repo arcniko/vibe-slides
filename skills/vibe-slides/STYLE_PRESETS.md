@@ -162,7 +162,70 @@ Before finalizing any presentation, verify:
 
 ## Dark Themes
 
-### 1. Bold Signal
+### 1. Archon (HAS TEMPLATE)
+
+**Template folder:** `templates/archon/` (contains `template.html` + `assets/` folder with logos, triangle patterns, and logo pattern PNGs)
+**When this style is selected, copy `template.html` and the `assets/` folder to the output directory as the starting point.** The template is a complete, working presentation with placeholder slides — just replace the content.
+
+**Vibe:** Deep-tech cinematic with corporate brand polish — animated atmosphere with structured slide types and brand assets. All-dark aesthetic throughout.
+
+**Layout:** JS-driven absolute-positioned slides with crossfade + translateY transitions. Progress bar top, nav dots right. Footer bar on every slide (except title): real logo image left, page number right. Triangle mosaic SVG on title, section header, and agenda slides. GridGlow canvas animation on all slides. Eight slide types covering full corporate presentation needs.
+
+**Typography:**
+- Display: `Outfit` (400/500/700)
+- Body: `Inter` (300/400/500/600)
+- Mono: `JetBrains Mono` (400/500)
+
+**Colors:**
+```css
+:root {
+    --bg-primary: #000020;
+    --bg-secondary: #0a0a30;
+    --bg-card: rgba(10, 10, 48, 0.7);
+    --text-primary: #e8eaed;
+    --text-secondary: #9598a8;
+    --text-muted: #5e6178;
+    --accent: #6DFB6E;
+    --accent-dim: rgba(109, 251, 110, 0.12);
+    --accent-glow: rgba(109, 251, 110, 0.25);
+    --accent-secondary: #4ae04b;
+    --border: rgba(109, 251, 110, 0.1);
+}
+```
+
+**Signature Elements:**
+- CSS grid overlay on every slide (`::before` with 60×60px grid lines)
+- Radial gradient orbs per slide (`::after`) — stronger on section headers
+- `GridGlow` canvas overlay — 2 drifting light orbs illuminating gridlines
+- `.gradient-text` headings (light green → neon green → dark green)
+- Neon-green accent squares on bullet `::before` (glow on hover)
+- `.episode-tag` — monospace, uppercase, with leading green square
+- Glass-morphism cards (`backdrop-filter: blur(10px)`)
+- Triangle mosaic SVG (green, white, gray triangles) — bottom-right on title/section/agenda slides
+- Real logo images from `assets/`
+- Footer bar with logo image + page number on every non-title slide
+- Section header accent line (60px x 3px green)
+- Agenda bars with numbered items and staggered widths
+- Reveal stagger: 40ms increments (0.02s, 0.06s, 0.10s...)
+
+**Animation:**
+- `--duration: 0.7s` with `--ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1)`
+- Slide transition: 300ms crossfade + 12px translateY
+- `.reveal` children fade up 10px, staggered by nth-child
+- `GridGlow` canvas: `requestAnimationFrame` loop with 2 orbs
+
+**Slide Types:**
+- `title-slide` — logo top-left, gradient h1, subtitle, divider, triangle mosaic right
+- `section-header` — accent line, gradient h2, subtitle, triangle mosaic at 0.4 opacity
+- `agenda-slide` — staggered gradient bars, numbered topics, triangle mosaic at 0.4 opacity
+- `content-slide` — dark bg, episode-tag + h2 + hover-glow bullet list
+- `two-content` — gradient h2 + 2x2 glass-morphism card grid
+- `image-content` — episode-tag + h2 + split layout (text left, image right)
+- `end-slide` — centered logo symbol, gradient h2, subtitle
+
+---
+
+### 2. Bold Signal
 
 **Vibe:** Confident, bold, modern, high-impact
 
@@ -456,6 +519,8 @@ Before finalizing any presentation, verify:
 
 | Preset | Display Font | Body Font | Source |
 |--------|--------------|-----------|--------|
+| Archon | Outfit | Inter | Google |
+| Archon Corporate | Geist | Geist | Vercel CDN |
 | Bold Signal | Archivo Black | Space Grotesk | Google |
 | Electric Studio | Manrope | Manrope | Google |
 | Creative Voltage | Syne | Space Mono | Google |

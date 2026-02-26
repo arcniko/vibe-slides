@@ -1,9 +1,9 @@
 ---
-name: frontend-slides
+name: vibe-slides
 description: Create stunning, animation-rich HTML presentations from scratch or by converting PowerPoint files. Use when the user wants to build a presentation, convert a PPT/PPTX to web, or create slides for a talk/pitch. Helps non-designers discover their aesthetic through visual exploration rather than abstract choices.
 ---
 
-# Frontend Slides Skill
+# Vibe Slides
 
 Create zero-dependency, animation-rich HTML presentations that run entirely in the browser. This skill helps non-designers discover their preferred aesthetic through visual exploration ("show, don't tell"), then generates production-quality slide decks.
 
@@ -320,20 +320,22 @@ Users can select a style in **two ways**:
 - Skip to Phase 3 immediately
 
 **Available Presets:**
-| Preset | Vibe | Best For |
-|--------|------|----------|
-| Bold Signal | Confident, high-impact | Pitch decks, keynotes |
-| Electric Studio | Clean, professional | Agency presentations |
-| Creative Voltage | Energetic, retro-modern | Creative pitches |
-| Dark Botanical | Elegant, sophisticated | Premium brands |
-| Notebook Tabs | Editorial, organized | Reports, reviews |
-| Pastel Geometry | Friendly, approachable | Product overviews |
-| Split Pastel | Playful, modern | Creative agencies |
-| Vintage Editorial | Witty, personality-driven | Personal brands |
-| Neon Cyber | Futuristic, techy | Tech startups |
-| Terminal Green | Developer-focused | Dev tools, APIs |
-| Swiss Modern | Minimal, precise | Corporate, data |
-| Paper & Ink | Literary, thoughtful | Storytelling |
+| Preset | Vibe | Best For | Template? |
+|--------|------|----------|-----------|
+| **Archon** | Deep-tech cinematic + corporate polish | Protocol/crypto, tech narratives, business decks | **YES** — `templates/archon/` |
+| **Archon Grid** | Archon + animated grid glow background | Same as Archon, with subtle animated grid effect | **YES** — `templates/archon-grid/` |
+| Bold Signal | Confident, high-impact | Pitch decks, keynotes | No |
+| Electric Studio | Clean, professional | Agency presentations | No |
+| Creative Voltage | Energetic, retro-modern | Creative pitches | No |
+| Dark Botanical | Elegant, sophisticated | Premium brands | No |
+| Notebook Tabs | Editorial, organized | Reports, reviews | No |
+| Pastel Geometry | Friendly, approachable | Product overviews | No |
+| Split Pastel | Playful, modern | Creative agencies | No |
+| Vintage Editorial | Witty, personality-driven | Personal brands | No |
+| Neon Cyber | Futuristic, techy | Tech startups | No |
+| Terminal Green | Developer-focused | Dev tools, APIs | No |
+| Swiss Modern | Minimal, precise | Corporate, data | No |
+| Paper & Ink | Literary, thoughtful | Storytelling | No |
 
 ### Step 2.0: Style Path Selection
 
@@ -354,12 +356,23 @@ First, ask how the user wants to choose their style:
 - Header: "Preset"
 - Question: "Which style would you like to use?"
 - Options:
+  - "Archon" — Deep-tech cinematic + corporate brand assets (has ready-made template)
   - "Bold Signal" — Vibrant card on dark, confident and high-impact
   - "Dark Botanical" — Elegant dark with soft abstract shapes
-  - "Notebook Tabs" — Editorial paper look with colorful section tabs
-  - "Pastel Geometry" — Friendly pastels with decorative pills
 
-(If user picks one, skip to Phase 3. If they want to see more options, show additional presets or proceed to guided discovery.)
+**If user picks Archon**, ask a follow-up:
+
+**Question: Grid Animation**
+- Header: "Animation"
+- Question: "Would you like animated grid glow lines in the background?"
+- Options:
+  - "No grid (clean)" — Clean dark background, no grid pattern (recommended)
+  - "With grid glow" — Subtle animated white grid lines that drift across the background
+
+If "No grid" → use `templates/archon/`
+If "With grid glow" → use `templates/archon-grid/`
+
+(If user picks a non-Archon preset, skip to Phase 3. If they want to see more options, show additional presets or proceed to guided discovery.)
 
 ### Step 2.1: Mood Selection (Guided Discovery)
 
@@ -460,6 +473,27 @@ If "Mix elements", ask for specifics.
 Now generate the full presentation based on:
 - Content from Phase 1
 - Style from Phase 2
+
+### Using Templates (Preferred When Available)
+
+If the chosen style has a template (see preset table), **copy the template as the starting point** instead of building from scratch:
+
+1. Copy the template's `template.html` file to the target directory (rename to the presentation name)
+2. Copy the template's `assets/` folder alongside it — the HTML uses relative `assets/` paths
+3. Replace placeholder slide content with the user's actual content
+4. Add/remove slides as needed, following the template's existing patterns
+
+Templates are located in: `~/.claude/skills/frontend-slides/templates/`
+
+Each template is a self-contained folder:
+```
+templates/<template-name>/
+├── template.html        # The presentation HTML
+└── assets/              # Images, logos, patterns used by the template
+```
+
+Currently available templates:
+- `archon/` — Deep-tech cinematic + corporate brand assets (Outfit + Inter fonts, animated grid glow, triangle mosaic, logo images)
 
 ### File Structure
 
@@ -880,6 +914,58 @@ Your presentation is ready!
 - Animations: Modify `.reveal` class timings
 
 Would you like me to make any adjustments?
+```
+
+---
+
+## Deploying Presentations
+
+When the presentation is complete (or the user asks to deploy/publish/share an existing one), offer the delivery choice:
+
+**Question: Delivery Method**
+- Header: "Deliver"
+- Question: "How would you like to access the presentation?"
+- Options:
+  - "Local only" — Just open it in my browser, no deploy
+  - "Deploy to surge.sh" — Publish to a public URL for easy sharing
+
+### Local Only
+
+Open the file with `open [filename].html` and provide the summary from Phase 5. Done.
+
+### Deploy to surge.sh
+
+Surge publishes a directory to `<name>.surge.sh` instantly. Requires the `surge` CLI (via `npx`) and a one-time `npx surge login`.
+
+**Deploy steps:**
+
+1. **Identify the presentation** — which HTML file + its assets folder. Ask if unclear.
+
+2. **Prepare deploy directory**
+   ```bash
+   DEPLOY_DIR=$(mktemp -d)
+   cp <presentation>.html "$DEPLOY_DIR/index.html"
+   cp -r assets/ "$DEPLOY_DIR/assets/" 2>/dev/null || true
+   ```
+
+3. **Deploy**
+   ```bash
+   npx surge "$DEPLOY_DIR" slides-<short-name>.surge.sh
+   ```
+   If surge asks for login, tell the user to run `npx surge login` in their terminal first, then retry.
+
+4. **Return the URL** — `https://slides-<short-name>.surge.sh`
+
+5. **Clean up** — `rm -rf "$DEPLOY_DIR"`
+
+### Re-deploying (updating an existing deployment)
+
+Run the same deploy steps again with the same domain — surge overwrites the previous version instantly.
+
+### Tearing down a deployment
+
+```bash
+npx surge teardown slides-<short-name>.surge.sh
 ```
 
 ---
