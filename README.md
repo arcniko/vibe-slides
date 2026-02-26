@@ -10,6 +10,14 @@ npx skills add arcniko/vibe-slides
 
 Then invoke with `/vibe-slides` in your agent.
 
+### Manual install (Claude Code)
+
+```bash
+git clone https://github.com/arcniko/vibe-slides.git /tmp/vibe-slides
+mv /tmp/vibe-slides/skills/vibe-slides ~/.claude/skills/
+rm -rf /tmp/vibe-slides
+```
+
 ## What it does
 
 - **Zero dependencies** — Single HTML files with inline CSS/JS. No npm, no build tools.
