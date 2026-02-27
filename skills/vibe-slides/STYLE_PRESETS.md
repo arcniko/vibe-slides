@@ -58,8 +58,11 @@ html {
     flex-direction: column;
     justify-content: center;
     max-height: 100%;
-    overflow: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     padding: var(--slide-padding);
+    padding-top: max(var(--slide-padding), 1rem);
+    padding-bottom: max(clamp(3.5rem, 6vh, 5rem), 2rem);
 }
 
 /* 4. ALL sizes use clamp() - scales with viewport */
@@ -81,11 +84,15 @@ html {
     max-height: min(80vh, 700px);
 }
 
-/* 6. Images constrained */
+/* 6. Images constrained — never exceed viewport minus buffer */
 img {
     max-width: 100%;
     max-height: min(50vh, 400px);
     object-fit: contain;
+}
+
+.split-layout .image-col img {
+    max-height: min(50vh, 400px);
 }
 
 /* 7. Grids adapt to space */
@@ -130,10 +137,31 @@ img {
     }
 }
 
-/* Narrow screens */
+/* Narrow screens (phones) */
 @media (max-width: 600px) {
+    :root {
+        --title-size: clamp(1.5rem, 8vw, 3rem);
+        --h2-size: clamp(1.1rem, 5vw, 2rem);
+        --h3-size: clamp(0.95rem, 4vw, 1.4rem);
+        --body-size: clamp(0.85rem, 3.5vw, 1.1rem);
+        --small-size: clamp(0.75rem, 2.8vw, 0.95rem);
+        --tag-size: clamp(0.7rem, 2.5vw, 0.9rem);
+        --slide-padding: clamp(1rem, 4vw, 2rem);
+    }
     .grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* Very narrow screens (small phones) */
+@media (max-width: 400px) {
+    :root {
+        --title-size: clamp(1.2rem, 7vw, 2.2rem);
+        --h2-size: clamp(0.95rem, 4.5vw, 1.6rem);
+        --h3-size: clamp(0.85rem, 3.5vw, 1.2rem);
+        --body-size: clamp(0.75rem, 3vw, 0.95rem);
+        --small-size: clamp(0.65rem, 2.5vw, 0.85rem);
+        --slide-padding: clamp(0.75rem, 3vw, 1.5rem);
     }
 }
 
@@ -153,7 +181,7 @@ Before finalizing any presentation, verify:
 - [ ] Every `.slide` has `height: 100vh; height: 100dvh; overflow: hidden;`
 - [ ] All font sizes use `clamp(min, preferred, max)`
 - [ ] All spacing uses `clamp()` or viewport units
-- [ ] Breakpoints exist for heights: 700px, 600px, 500px
+- [ ] Breakpoints exist for heights: 700px, 600px, 500px and widths: 600px, 400px
 - [ ] Content respects density limits (max 6 bullets, max 6 cards)
 - [ ] No fixed pixel heights on content elements
 - [ ] Images have `max-height` constraints
@@ -553,7 +581,7 @@ Before finalizing any presentation, verify:
 **Symptoms:** Scrollbar appears, content cut off, elements outside viewport
 
 **Solutions:**
-1. Check slide has `overflow: hidden` (not `overflow: auto` or `visible`)
+1. Check `.slide` has `overflow: hidden`; `.slide-content` uses `overflow-y: auto` with padding guards
 2. Reduce content — split into multiple slides
 3. Ensure all fonts use `clamp()` not fixed `px` or `rem`
 4. Add/fix height breakpoints for smaller screens

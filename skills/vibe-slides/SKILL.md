@@ -85,8 +85,11 @@ html {
     flex-direction: column;
     justify-content: center;
     max-height: 100%;
-    overflow: hidden; /* Double-protection against overflow */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     padding: var(--slide-padding);
+    padding-top: max(var(--slide-padding), 1rem);
+    padding-bottom: max(clamp(3.5rem, 6vh, 5rem), 2rem);
 }
 
 /* 4. ALL typography uses clamp() for responsive scaling */
@@ -129,11 +132,15 @@ html {
     gap: clamp(0.5rem, 1.5vw, 1rem);
 }
 
-/* 8. Images constrained to viewport */
+/* 8. Images constrained to viewport — never exceed viewport minus buffer */
 img, .image-container {
     max-width: 100%;
     max-height: min(50vh, 400px);
     object-fit: contain;
+}
+
+.split-layout .image-col img {
+    max-height: min(50vh, 400px);
 }
 
 /* ===========================================
@@ -176,15 +183,33 @@ img, .image-container {
     }
 }
 
-/* Narrow viewports (< 600px width) */
+/* Narrow viewports — phones (< 600px width) */
 @media (max-width: 600px) {
     :root {
-        --title-size: clamp(1.25rem, 7vw, 2.5rem);
+        --title-size: clamp(1.5rem, 8vw, 3rem);
+        --h2-size: clamp(1.1rem, 5vw, 2rem);
+        --h3-size: clamp(0.95rem, 4vw, 1.4rem);
+        --body-size: clamp(0.85rem, 3.5vw, 1.1rem);
+        --small-size: clamp(0.75rem, 2.8vw, 0.95rem);
+        --tag-size: clamp(0.7rem, 2.5vw, 0.9rem);
+        --slide-padding: clamp(1rem, 4vw, 2rem);
     }
 
     /* Stack grids vertically */
     .grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* Very narrow viewports — small phones (< 400px width) */
+@media (max-width: 400px) {
+    :root {
+        --title-size: clamp(1.2rem, 7vw, 2.2rem);
+        --h2-size: clamp(0.95rem, 4.5vw, 1.6rem);
+        --h3-size: clamp(0.85rem, 3.5vw, 1.2rem);
+        --body-size: clamp(0.75rem, 3vw, 0.95rem);
+        --small-size: clamp(0.65rem, 2.5vw, 0.85rem);
+        --slide-padding: clamp(0.75rem, 3vw, 1.5rem);
     }
 }
 
@@ -214,7 +239,7 @@ Before generating any presentation, mentally verify:
 4. ✅ Content containers have `max-height` constraints
 5. ✅ Images have `max-height: min(50vh, 400px)` or similar
 6. ✅ Grids use `auto-fit` with `minmax()` for responsive columns
-7. ✅ Breakpoints exist for heights: 700px, 600px, 500px
+7. ✅ Breakpoints exist for heights: 700px, 600px, 500px and widths: 600px, 400px
 8. ✅ No fixed pixel heights on content elements
 9. ✅ Content per slide respects density limits
 
@@ -597,14 +622,17 @@ Follow this structure for all presentations:
             overflow: hidden; /* Prevent any content overflow */
         }
 
-        /* Content wrapper that prevents overflow */
+        /* Content wrapper — scrolls as last resort, guaranteed padding buffer */
         .slide-content {
             flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             max-height: 100%;
-            overflow: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-top: max(var(--slide-padding), 1rem);
+            padding-bottom: max(clamp(3.5rem, 6vh, 5rem), 2rem);
         }
 
         /* ===========================================
@@ -768,8 +796,8 @@ Quick reference:
 - Every `.slide` must have `height: 100vh; height: 100dvh; overflow: hidden;`
 - All typography and spacing must use `clamp()`
 - Respect content density limits (max 4-6 bullets, max 6 cards, etc.)
-- Include breakpoints for heights: 700px, 600px, 500px
-- When content doesn't fit → split into multiple slides, never scroll
+- Include breakpoints for heights: 700px, 600px, 500px and widths: 600px, 400px
+- When content doesn't fit → split into multiple slides; `.slide-content` scrolls as last resort
 
 ---
 
