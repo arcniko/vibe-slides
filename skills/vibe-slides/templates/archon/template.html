@@ -37,8 +37,8 @@
             --title-size: clamp(3rem, 8vw, 6rem);
             --h2-size: clamp(2.2rem, 5vw, 4rem);
             --h3-size: clamp(1.6rem, 4vw, 2.8rem);
-            --body-size: clamp(1.35rem, 2.5vw, 1.9rem);
-            --small-size: clamp(0.95rem, 1.5vw, 1.2rem);
+            --body-size: clamp(1.1rem, 2.2vw, 1.7rem);
+            --small-size: clamp(0.85rem, 1.4vw, 1.1rem);
             --tag-size: clamp(0.9rem, 1.3vw, 1.1rem);
 
             /* Spacing — responsive */
@@ -116,9 +116,11 @@
             flex-direction: column;
             justify-content: center;
             max-height: 100%;
-            overflow: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
             padding: var(--slide-padding);
-            padding-bottom: clamp(3.5rem, 6vh, 5rem);
+            padding-top: max(var(--slide-padding), 1rem);
+            padding-bottom: max(clamp(3.5rem, 6vh, 5rem), 2rem);
             position: relative;
             z-index: 1;
         }
@@ -597,7 +599,7 @@
 
         .split-layout .image-col img {
             width: 100%;
-            max-height: min(60vh, 500px);
+            max-height: min(50vh, 400px);
             object-fit: cover;
             border-radius: 8px;
             border: 1px solid var(--border);
@@ -762,6 +764,11 @@
             :root {
                 --title-size: clamp(1.5rem, 8vw, 3rem);
                 --h2-size: clamp(1.1rem, 5vw, 2rem);
+                --h3-size: clamp(0.95rem, 4vw, 1.4rem);
+                --body-size: clamp(0.85rem, 3.5vw, 1.1rem);
+                --small-size: clamp(0.75rem, 2.8vw, 0.95rem);
+                --tag-size: clamp(0.7rem, 2.5vw, 0.9rem);
+                --slide-padding: clamp(1rem, 4vw, 2rem);
             }
             .title-slide .slide-content { padding-right: var(--slide-padding); }
             .card-grid { grid-template-columns: 1fr; }
@@ -772,6 +779,17 @@
             }
             .split-layout .image-col img {
                 max-height: min(30vh, 250px);
+            }
+        }
+
+        @media (max-width: 400px) {
+            :root {
+                --title-size: clamp(1.2rem, 7vw, 2.2rem);
+                --h2-size: clamp(0.95rem, 4.5vw, 1.6rem);
+                --h3-size: clamp(0.85rem, 3.5vw, 1.2rem);
+                --body-size: clamp(0.75rem, 3vw, 0.95rem);
+                --small-size: clamp(0.65rem, 2.5vw, 0.85rem);
+                --slide-padding: clamp(0.75rem, 3vw, 1.5rem);
             }
         }
 
