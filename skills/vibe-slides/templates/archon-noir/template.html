@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presentation Title</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+    /* ============================================================
+       ARCHON NOIR — deep-tech / minimalist dark theme
+       OpenAI restraint × Apple precision. Near-black canvas,
+       off-white type, accents only for signals.
+       Change values in :root to re-theme the deck.
+       ============================================================ */
+
+    *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+    html,body { height:100%; overflow:hidden; }
+
+    :root {
+        --bg:        #050507;
+        --surface:   #0E0E11;
+        --surface-2: #16161A;
+        --hairline:  rgba(255,255,255,0.07);
+        --hairline-2:rgba(255,255,255,0.14);
+
+        --text:    #F5F5F7;
+        --text-2:  #A1A1A6;
+        --text-3:  #6E6E73;
+        --text-4:  #3A3A3D;
+
+        --green:   #6DFB6E;
+        --green-deep: #30D158;
+        --mint:    #5EEAD4;
+        --blue:    #5AAFFF;
+        --indigo:  #818CF8;
+        --violet:  #A78BFA;
+        --amber:   #FBBF24;
+        --coral:   #FF6B5C;
+        --pink:    #FF6482;
+
+        --accent: var(--green);
+        --accent-halo: rgba(109, 251, 110, 0.20);
+    }
+
+    body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Geist', sans-serif;
+        font-weight: 400;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* === FRAMEWORK ========================================== */
+    .slides-wrapper { position: relative; width: 100vw; height: 100vh; height: 100dvh; overflow: hidden; }
+    .slide {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
+        opacity: 0; pointer-events: none;
+        transition: opacity 450ms cubic-bezier(0.16, 1, 0.3, 1);
+        overflow: hidden;
+        display: grid;
+        grid-template-rows: 1fr;
+        padding: clamp(2rem, 5vw, 5rem) clamp(2.5rem, 6vw, 6rem);
+        padding-bottom: clamp(4.5rem, 7.5vh, 6rem);
+    }
+    .slide.active { opacity: 1; pointer-events: auto; z-index: 1; }
+
+    /* === GLOBAL FOOTER ====================================== */
+    .global-footer {
+        position: fixed;
+        bottom: clamp(1rem, 2.5vh, 2rem);
+        left: 0; right: 0;
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 0 clamp(2.5rem, 6vw, 6rem);
+        z-index: 90;
+        pointer-events: none;
+        transition: opacity 300ms ease;
+    }
+    .global-footer .brand img {
+        height: clamp(26px, 3vh, 36px);
+        opacity: 0.65;
+    }
+    .global-footer .counter {
+        font-family: 'Geist Mono', monospace;
+        font-size: clamp(0.85rem, 1vw, 0.95rem);
+        letter-spacing: 0.22em; color: var(--text-3);
+        text-transform: uppercase; font-weight: 500;
+        font-variant-numeric: tabular-nums;
+    }
+    .global-footer .counter .current { color: var(--text); font-weight: 600; }
+    body.on-title .global-footer { opacity: 0; }
+
+    /* === NAV DOTS =========================================== */
+    .nav-dots {
+        position: fixed;
+        right: clamp(1rem, 1.8vw, 2rem);
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex; flex-direction: column; gap: 8px;
+        z-index: 100;
+    }
+    .nav-dot {
+        width: 7px; height: 7px;
+        border-radius: 50%;
+        background: var(--text);
+        opacity: 0.18;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        border: none; padding: 0;
+    }
+    .nav-dot:hover { opacity: 0.6; transform: scale(1.3); }
+    .nav-dot.active {
+        opacity: 1;
+        background: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-halo);
+    }
+    .nav-dot.section-sep {
+        width: 7px; height: 1px;
+        border-radius: 1px;
+        background: var(--text);
+        opacity: 0.18;
+        cursor: default;
+    }
+
+    /* === FULLSCREEN TOGGLE ================================== */
+    .fs-toggle {
+        position: fixed;
+        top: clamp(1rem, 2vh, 1.5rem);
+        right: clamp(1rem, 2vw, 1.5rem);
+        z-index: 120;
+        width: 34px; height: 34px;
+        display: flex; align-items: center; justify-content: center;
+        background: transparent;
+        border: 1px solid var(--hairline-2);
+        border-radius: 8px;
+        color: var(--text-3);
+        cursor: pointer;
+        opacity: 0.55;
+        transition: opacity 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+    .fs-toggle:hover { opacity: 1; color: var(--text); border-color: var(--text-2); }
+    body.on-title .fs-toggle { opacity: 0; pointer-events: none; }
+
+    /* === PROGRESS BAR ======================================= */
+    .progress-bar {
+        position: fixed;
+        left: 0; bottom: 0;
+        height: 2px;
+        background: var(--accent);
+        transition: width 500ms cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 110;
+        width: 0;
+        box-shadow: 0 0 12px var(--accent-halo);
+    }
+
+    /* === REVEAL ============================================ */
+    @keyframes rise { from { opacity:0; transform: translateY(14px); } to { opacity:1; transform: translateY(0); } }
+    .slide.active .reveal { opacity:0; animation: rise 1s cubic-bezier(0.16,1,0.3,1) forwards; }
+    .slide.active .reveal:nth-of-type(1) { animation-delay: 0.12s; }
+    .slide.active .reveal:nth-of-type(2) { animation-delay: 0.28s; }
+    .slide.active .reveal:nth-of-type(3) { animation-delay: 0.44s; }
+    .slide.active .reveal:nth-of-type(4) { animation-delay: 0.60s; }
+    .slide.active .reveal:nth-of-type(5) { animation-delay: 0.76s; }
+    .slide.active .reveal:nth-of-type(6) { animation-delay: 0.92s; }
+    @media (prefers-reduced-motion: reduce) {
+        *,*::before,*::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+    }
+
+    /* === SHARED TYPE ====================================== */
+    h1, h2 {
+        font-family: 'Geist', sans-serif;
+        font-weight: 400;
+        line-height: 1.0;
+        letter-spacing: -0.035em;
+        color: var(--text);
+    }
+
+    .section-pill {
+        display: inline-block; width: fit-content;
+        font-family: 'Geist Mono', monospace;
+        font-size: clamp(0.78rem, 1vw, 0.92rem);
+        letter-spacing: 0.22em; text-transform: uppercase;
+        color: var(--accent);
+        background: transparent;
+        padding: 0.45rem 1rem;
+        border: 1px solid var(--accent);
+        border-radius: 999px;
+        font-weight: 500;
+    }
+
+    /* === BULLETS — numbered (01., 02., 03.) with hairlines === */
+    .bullets {
+        list-style: none;
+        max-width: 78ch;
+        margin-top: clamp(0.5rem, 1vh, 1rem);
+        counter-reset: bullet-counter;
+    }
+    .bullets li {
+        counter-increment: bullet-counter;
+        position: relative;
+        padding-left: 2.4rem;
+        padding-bottom: clamp(0.95rem, 2vh, 1.4rem);
+        margin-bottom: clamp(0.95rem, 2vh, 1.4rem);
+        border-bottom: 1px solid var(--hairline);
+        font-family: 'Geist', sans-serif;
+        font-weight: 300;
+        font-size: clamp(1.1rem, 1.45vw, 1.32rem);
+        line-height: 1.55;
+        color: var(--text);
+        letter-spacing: -0.005em;
+    }
+    .bullets li:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .bullets li::before {
+        content: counter(bullet-counter, decimal-leading-zero);
+        position: absolute;
+        left: 0; top: 0.32em;
+        font-family: 'Geist Mono', monospace;
+        font-size: clamp(0.78rem, 1vw, 0.92rem);
+        letter-spacing: 0.18em;
+        color: var(--text-3);
+        font-weight: 500;
+    }
+    .bullets li strong { font-weight: 500; color: var(--text); }
+
+    /* === TITLE / COVER ====================================== */
+    .s-title { padding-left: clamp(4rem, 11vw, 12rem); }
+    .s-title .body {
+        display: flex; flex-direction: column; justify-content: center;
+        gap: clamp(1.25rem, 2.8vh, 2.25rem);
+    }
+    .title-logo { margin-bottom: clamp(0.5rem, 1.5vh, 1.25rem); }
+    .title-logo img { height: clamp(40px, 5.5vh, 64px); display: block; opacity: 0.92; }
+    .s-title .meta {
+        font-family: 'Geist Mono', monospace;
+        font-size: clamp(0.85rem, 1.05vw, 1rem);
+        letter-spacing: 0.28em; text-transform: uppercase;
+        color: var(--accent); font-weight: 500;
+        display: inline-flex; align-items: center; gap: 0.7rem;
+    }
+    .s-title .meta::before { content:''; width: 22px; height: 1px; background: var(--accent); }
+    .s-title h1 {
+        font-size: clamp(2.5rem, 6vw, 5.25rem);
+        font-weight: 400; letter-spacing: -0.04em; max-width: 18ch;
+    }
+    .s-title .byline {
+        font-family: 'Geist', sans-serif; font-weight: 300;
+        font-size: clamp(1.2rem, 1.55vw, 1.4rem);
+        color: var(--text-2); max-width: 56ch;
+        line-height: 1.5; letter-spacing: -0.005em;
+    }
+
+    /* === AGENDA ============================================ */
+    .s-agenda { padding-left: clamp(4rem, 11vw, 12rem); }
+    .s-agenda .body {
+        display: flex; flex-direction: column; justify-content: center;
+        gap: clamp(1rem, 2.5vh, 1.75rem);
+    }
+    .s-agenda h1 {
+        font-size: clamp(2.5rem, 5.25vw, 4.5rem);
+        font-weight: 400; letter-spacing: -0.04em; max-width: 16ch;
+    }
+    .agenda-list {
+        display: flex; flex-direction: column;
+        margin-top: clamp(0.75rem, 1.5vh, 1.25rem);
+        list-style: none; max-width: 80ch;
+    }
+    .agenda-item {
+        display: grid;
+        grid-template-columns: clamp(3rem, 4.5vw, 4rem) 1fr auto;
+        align-items: baseline;
+        column-gap: clamp(1rem, 2vw, 1.75rem);
+        padding: clamp(0.95rem, 2vh, 1.4rem) 0;
+        border-bottom: 1px solid var(--hairline);
+        text-decoration: none;
+        cursor: pointer;
+        transition: padding-left 250ms ease, color 250ms ease;
+    }
+    .agenda-item:hover { padding-left: clamp(0.5rem, 1vw, 1rem); }
+    .agenda-item .num {
+        font-family: 'Geist Mono', monospace;
+        font-size: clamp(0.85rem, 1.05vw, 1rem);
+        letter-spacing: 0.22em; color: var(--text-3);
+        font-variant-numeric: tabular-nums; font-weight: 500;
+    }
+    .agenda-item .title {
+        font-family: 'Geist', sans-serif; font-weight: 400;
+        font-size: clamp(1.5rem, 2.4vw, 2.2rem);
+        color: var(--text); letter-spacing: -0.025em;
+        transition: color 250ms ease;
+    }
+    .agenda-item .chip {
+        font-family: 'Geist Mono', monospace;
+        font-size: clamp(0.78rem, 0.95vw, 0.9rem);
+        letter-spacing: 0.2em; text-transform: uppercase;
+        color: var(--text-3);
+    }
+    .agenda-item:hover .title { color: var(--accent); }
+
+    /* === SECTION HEADER ===================================== */
+    .s-section { padding-left: clamp(4rem, 11vw, 12rem); }
+    .s-section .body {
+        display: flex; flex-direction: column; justify-content: center;
+        gap: clamp(1.75rem, 3.5vh, 3rem); height: 100%;
+    }
+    .s-section .chapter-line {
+        display: flex; align-items: center;
+        gap: clamp(1.25rem, 2.5vw, 2.25rem);
+        font-family: 'Geist Mono', monospace;
+        font-size: clamp(0.9rem, 1.1vw, 1.05rem);
+        letter-spacing: 0.28em; text-transform: uppercase;
+        max-width: 56vw;
+    }
+    .s-section .chapter-line .num {
+        color: var(--accent); font-weight: 600;
+        font-variant-numeric: tabular-nums;
+    }
+    .s-section .chapter-line .label { color: var(--text-2); }
+    .s-section .chapter-line .line {
+        flex: 1; height: 1px;
+        background: linear-gradient(to right, var(--hairline) 0%, transparent 100%);
+        max-width: 320px;
+    }
+    .s-section h1 {
+        font-size: clamp(2.85rem, 6.4vw, 5.5rem);
+        font-weight: 300; letter-spacing: -0.045em; max-width: 18ch;
+    }
+    .s-section .sub {
+        font-family: 'Geist', sans-serif; font-weight: 300;
+        font-size: clamp(1.15rem, 1.5vw, 1.4rem);
+        color: var(--text-2); line-height: 1.5;
+        letter-spacing: -0.005em; max-width: 56ch;
+        margin-top: clamp(0.25rem, 0.5vh, 0.75rem);
+    }
+
+    /* === CONTENT (BULLETS) SLIDE =========================== */
+    .s-content { padding-left: clamp(4rem, 8vw, 9rem); }
+    .s-content .body {
+        display: flex; flex-direction: column; justify-content: center;
+        gap: clamp(1.25rem, 2.5vh, 1.85rem);
+    }
+    .s-content h1 {
+        font-size: clamp(2.1rem, 4.5vw, 3.75rem);
+        font-weight: 400; max-width: 22ch;
+    }
+
+    /* === DIAGRAM SLIDES ==================================== */
+    .s-diagram { padding-left: clamp(3rem, 6vw, 6rem); }
+    .s-diagram .body {
+        display: flex; flex-direction: column; justify-content: center;
+        gap: clamp(0.65rem, 1.5vh, 1rem); min-height: 0;
+    }
+    .s-diagram h1 {
+        font-size: clamp(1.6rem, 3.4vw, 2.75rem);
+        font-weight: 400; max-width: 32ch;
+    }
+    .diagram-wrap {
+        flex: 1; min-height: 0;
+        display: grid; place-items: center;
+        padding: clamp(0.25rem, 0.8vh, 0.65rem) 0;
+    }
+    .diagram-svg {
+        width: 100%; height: 100%;
+        max-height: clamp(320px, 62vh, 620px);
+    }
+
+    /* SVG vocabulary — reuse these classes inside .diagram-svg */
+    .diagram-svg .node-bg {
+        fill: var(--surface);
+        stroke: var(--hairline-2); stroke-width: 1.5;
+    }
+    .diagram-svg .node-bg-accent {
+        fill: rgba(109, 251, 110, 0.05);
+        stroke: var(--accent); stroke-width: 1.5;
+    }
+    .diagram-svg .node-bg-warn {
+        fill: rgba(255, 107, 92, 0.05);
+        stroke: var(--coral); stroke-width: 1.5;
+    }
+    .diagram-svg .node-tag {
+        font-family: 'Geist Mono', monospace;
+        font-size: 13px; letter-spacing: 2px; font-weight: 500;
+        text-transform: uppercase; fill: var(--text-3);
+        text-anchor: middle;
+    }
+    .diagram-svg .node-title {
+        font-family: 'Geist', sans-serif; font-weight: 500;
+        font-size: 22px; fill: var(--text);
+        text-anchor: middle; letter-spacing: -0.02em;
+    }
+    .diagram-svg .node-sub {
+        font-family: 'Geist', sans-serif; font-weight: 300;
+        font-size: 13px; fill: var(--text-2);
+        text-anchor: middle;
+    }
+    .diagram-svg .arrow { stroke: var(--text); stroke-width: 2; fill: none; }
+    .diagram-svg .arrow-dim { stroke: var(--text-3); stroke-width: 1.5; fill: none; stroke-dasharray: 5 4; }
+    .diagram-svg .arrow-warn { stroke: var(--coral); stroke-width: 2; fill: none; }
+    .diagram-svg .arrow-label {
+        font-family: 'Geist', sans-serif; font-weight: 300;
+        font-size: 13px; fill: var(--text-2); text-anchor: middle;
+    }
+    .diagram-svg .arrow-label-accent {
+        font-family: 'Geist Mono', monospace; font-weight: 500;
+        font-size: 12px; fill: var(--accent);
+        text-anchor: middle; letter-spacing: 1.5px; text-transform: uppercase;
+    }
+    .diagram-svg .scenario-label {
+        font-family: 'Geist', sans-serif; font-weight: 500;
+        font-size: 16px; fill: var(--text);
+    }
+
+    /* === END SLIDE ========================================== */
+    .s-end .body {
+        display: flex; flex-direction: column;
+        justify-content: center; align-items: center;
+        text-align: center;
+        gap: clamp(1.5rem, 3vh, 2.25rem);
+        height: 100%;
+    }
+    .s-end .symbol { margin-bottom: clamp(0.5rem, 1.5vh, 1.25rem); }
+    .s-end .symbol img {
+        height: clamp(120px, 22vh, 220px);
+        display: block; opacity: 0.95;
+    }
+    .s-end h1 {
+        font-size: clamp(3.25rem, 8.5vw, 7rem);
+        font-weight: 300; letter-spacing: -0.045em;
+        margin-top: clamp(0.5rem, 1.5vh, 1.25rem);
+    }
+    .s-end .end-sub {
+        font-family: 'Geist', sans-serif; font-weight: 300;
+        font-size: clamp(1.25rem, 1.65vw, 1.55rem);
+        color: var(--text-2); max-width: 48ch; line-height: 1.45;
+    }
+    .url-pill {
+        display: inline-flex; align-items: center; gap: 0.55rem;
+        margin-top: clamp(0.5rem, 1.5vh, 1.25rem);
+        padding: clamp(0.65rem, 1.1vh, 0.85rem) clamp(1.3rem, 1.8vw, 1.75rem);
+        background: transparent;
+        color: var(--text);
+        border: 1px solid var(--hairline-2);
+        border-radius: 999px;
+        font-family: 'Geist Mono', monospace;
+        font-size: clamp(0.9rem, 1.1vw, 1.05rem);
+        letter-spacing: 0.18em; text-transform: lowercase;
+        text-decoration: none; font-weight: 500;
+        transition: border-color 200ms ease, background 200ms ease, transform 200ms ease;
+    }
+    .url-pill::before {
+        content:''; width: 7px; height: 7px;
+        border-radius: 50%; background: var(--accent);
+        box-shadow: 0 0 8px var(--accent-halo);
+    }
+    .url-pill:hover {
+        border-color: var(--accent);
+        background: rgba(109, 251, 110, 0.06);
+        transform: translateY(-1px);
+    }
+
+    /* === RESPONSIVE ======================================== */
+    @media (max-height: 720px) {
+        h1 { font-size: clamp(1.6rem, 3.5vw, 2.6rem) !important; }
+        .s-title h1 { font-size: clamp(2.5rem, 6vw, 4.5rem) !important; }
+        .s-end h1 { font-size: clamp(3rem, 9vw, 7rem) !important; }
+        .s-section h1 { font-size: clamp(2.5rem, 6vw, 5rem) !important; }
+    }
+</style>
+</head>
+<body>
+
+<div class="slides-wrapper">
+
+    <!-- 01 · TITLE -->
+    <section class="slide s-title active">
+        <div class="body">
+            <div class="title-logo reveal"><img src="assets/logo-hor-green-white.png" alt="Brand"></div>
+            <span class="meta reveal">Memo · 2026</span>
+            <h1 class="reveal">A presentation title, set in two lines.</h1>
+            <p class="byline reveal">A short subtitle or byline that frames the work — who it's for and why it exists.</p>
+        </div>
+    </section>
+
+    <!-- 02 · AGENDA -->
+    <section class="slide s-agenda">
+        <div class="body">
+            <span class="section-pill reveal">overview</span>
+            <h1 class="reveal">What we'll cover.</h1>
+            <nav class="agenda-list reveal">
+                <a class="agenda-item" href="#3"><span class="num">01</span><span class="title">First Chapter Title</span><span class="chip">topic</span></a>
+                <a class="agenda-item" href="#5"><span class="num">02</span><span class="title">Second Chapter Title</span><span class="chip">topic</span></a>
+                <a class="agenda-item" href="#7"><span class="num">03</span><span class="title">Third Chapter Title</span><span class="chip">topic</span></a>
+            </nav>
+        </div>
+    </section>
+
+    <!-- 03 · SECTION 01 HEADER -->
+    <section class="slide s-section">
+        <div class="body">
+            <div class="chapter-line reveal">
+                <span class="num">01</span>
+                <span class="label">Chapter</span>
+                <span class="line"></span>
+            </div>
+            <h1 class="reveal">First chapter title.</h1>
+            <p class="sub reveal">A single sentence that sets up the chapter — what we're about to argue, show, or explain.</p>
+        </div>
+    </section>
+
+    <!-- 04 · CONTENT (numbered bullets) -->
+    <section class="slide s-content">
+        <div class="body">
+            <span class="section-pill reveal">subtopic</span>
+            <h1 class="reveal">A claim, framed as one sentence.</h1>
+            <ul class="bullets reveal">
+                <li><strong>First point.</strong> A short follow-on clause that explains or qualifies the point.</li>
+                <li><strong>Second point.</strong> Keep each bullet to one or two short sentences — the typography rewards restraint.</li>
+                <li><strong>Third point.</strong> Numbered counters render automatically; do not write the numbers in the markup.</li>
+                <li><strong>Fourth point.</strong> Aim for four to six bullets per slide. Five is the sweet spot.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 05 · SECTION 02 HEADER -->
+    <section class="slide s-section">
+        <div class="body">
+            <div class="chapter-line reveal">
+                <span class="num">02</span>
+                <span class="label">Chapter</span>
+                <span class="line"></span>
+            </div>
+            <h1 class="reveal">Second chapter title.</h1>
+            <p class="sub reveal">A single sentence that sets up the chapter.</p>
+        </div>
+    </section>
+
+    <!-- 06 · DIAGRAM — example flow with three nodes -->
+    <section class="slide s-diagram">
+        <div class="body">
+            <span class="section-pill reveal">how it works</span>
+            <h1 class="reveal">A flow, drawn in SVG.</h1>
+            <div class="diagram-wrap reveal">
+                <svg class="diagram-svg" viewBox="0 0 1100 460" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <marker id="arrow-tpl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+                            <path d="M0,0 L10,5 L0,10 Z" fill="#F5F5F7"/>
+                        </marker>
+                    </defs>
+
+                    <text class="scenario-label" x="40" y="40">A worked example — three nodes, two arrows, one outcome.</text>
+                    <line x1="40" y1="52" x2="1060" y2="52" stroke="rgba(245,245,247,0.18)" stroke-width="1"/>
+
+                    <rect class="node-bg-accent" x="60" y="170" width="240" height="120" rx="12"/>
+                    <text class="node-tag" x="180" y="200" style="fill: var(--green)">SOURCE</text>
+                    <text class="node-title" x="180" y="235">Input</text>
+                    <text class="node-sub" x="180" y="260">where the work starts</text>
+
+                    <rect class="node-bg" x="430" y="170" width="240" height="120" rx="12"/>
+                    <text class="node-tag" x="550" y="200">STAGE</text>
+                    <text class="node-title" x="550" y="235">Process</text>
+                    <text class="node-sub" x="550" y="260">what transforms it</text>
+
+                    <rect class="node-bg-accent" x="800" y="170" width="240" height="120" rx="12"/>
+                    <text class="node-tag" x="920" y="200" style="fill: var(--green)">RESULT</text>
+                    <text class="node-title" x="920" y="235">Output</text>
+                    <text class="node-sub" x="920" y="260">what the user gets</text>
+
+                    <path class="arrow" d="M 300 230 L 425 230" marker-end="url(#arrow-tpl)"/>
+                    <text class="arrow-label-accent" x="362" y="218">step 1</text>
+
+                    <path class="arrow" d="M 670 230 L 795 230" marker-end="url(#arrow-tpl)"/>
+                    <text class="arrow-label-accent" x="732" y="218">step 2</text>
+
+                    <text class="arrow-label" x="550" y="370" style="font-size:13px">Reuse the .node-bg, .node-bg-accent, .arrow, .arrow-label classes for consistent diagram styling across slides.</text>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- 07 · CONTENT — closing argument -->
+    <section class="slide s-content">
+        <div class="body">
+            <span class="section-pill reveal">takeaway</span>
+            <h1 class="reveal">The whole thing, in one line.</h1>
+            <ul class="bullets reveal">
+                <li><strong>Restate the thesis.</strong> Make it concrete and unambiguous.</li>
+                <li><strong>Name the next step.</strong> What the audience should do, ask, or decide after this slide.</li>
+                <li><strong>Leave one provocation.</strong> A question or open thread that earns the next conversation.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 08 · END -->
+    <section class="slide s-end">
+        <div class="body">
+            <div class="symbol reveal"><img src="assets/logo-symbol-green.png" alt=""></div>
+            <h1 class="reveal">Thank you.</h1>
+            <p class="end-sub reveal">Questions, follow-ups, and the rest of the conversation.</p>
+            <a class="url-pill reveal" href="#">your-deck.example.com</a>
+        </div>
+    </section>
+
+</div>
+
+<nav class="nav-dots" id="navDots" aria-label="Slide navigation"></nav>
+
+<footer class="global-footer" id="globalFooter">
+    <a class="brand"><img src="assets/logo-hor-green-white.png" alt="Brand"></a>
+    <span class="counter"><span class="current" id="counterCurrent">1</span> / <span id="counterTotal">1</span></span>
+</footer>
+
+<button class="fs-toggle" id="fsToggle" aria-label="Toggle fullscreen (F)" title="Fullscreen (F)">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V3h4M21 7V3h-4M3 17v4h4M21 17v4h-4"/></svg>
+</button>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<script>
+    /* ============================================================
+       ARCHON NOIR — slide controller
+       Section boundaries derive from .s-section slides + the .s-end
+       slide. Add or remove slides without touching JS.
+       ============================================================ */
+    class NoirDeck {
+        constructor() {
+            this.slides = Array.from(document.querySelectorAll('.slide'));
+            this.total = this.slides.length;
+            this.current = 0;
+            this.transitioning = false;
+
+            // Section separator positions in the nav dots:
+            // before every .s-section slide AFTER the first one,
+            // and before the final .s-end slide.
+            this.sectionStarts = new Set();
+            let firstSectionSeen = false;
+            this.slides.forEach((s, i) => {
+                if (s.classList.contains('s-section')) {
+                    if (firstSectionSeen) this.sectionStarts.add(i);
+                    else firstSectionSeen = true;
+                    if (!firstSectionSeen) firstSectionSeen = true;
+                }
+                if (s.classList.contains('s-end')) this.sectionStarts.add(i);
+            });
+            // Always mark the first section header too, so each chapter is
+            // visually grouped.
+            const firstSection = this.slides.findIndex(s => s.classList.contains('s-section'));
+            if (firstSection > 0) this.sectionStarts.add(firstSection);
+
+            this.counterCurrent = document.getElementById('counterCurrent');
+            this.counterTotal = document.getElementById('counterTotal');
+            this.progressBar = document.getElementById('progressBar');
+            if (this.counterTotal) this.counterTotal.textContent = this.total;
+
+            this.init();
+        }
+
+        init() {
+            const hash = parseInt(location.hash.replace('#', ''), 10);
+            const start = (hash >= 1 && hash <= this.total) ? hash - 1 : 0;
+            if (start !== 0) {
+                this.slides[0].classList.remove('active');
+                this.slides[start].classList.add('active');
+                this.current = start;
+            }
+            this.createNavDots();
+            this.updateActiveDot();
+            this.updateChrome();
+
+            const fsBtn = document.getElementById('fsToggle');
+            if (fsBtn) fsBtn.addEventListener('click', () => {
+                if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+                else document.exitFullscreen?.();
+            });
+
+            window.addEventListener('hashchange', () => {
+                const s = parseInt(location.hash.replace('#', ''), 10);
+                if (s >= 1 && s <= this.total) this.goTo(s - 1);
+            });
+            document.addEventListener('keydown', (e) => {
+                if (['ArrowRight','ArrowDown',' ','PageDown'].includes(e.key)) { e.preventDefault(); this.next(); }
+                else if (['ArrowLeft','ArrowUp','PageUp'].includes(e.key)) { e.preventDefault(); this.prev(); }
+                else if (e.key === 'Home') { e.preventDefault(); this.goTo(0); }
+                else if (e.key === 'End') { e.preventDefault(); this.goTo(this.total - 1); }
+                else if (e.key === 'f' || e.key === 'F') {
+                    e.preventDefault();
+                    if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+                    else document.exitFullscreen?.();
+                }
+            });
+            let startY = 0;
+            document.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; }, { passive: true });
+            document.addEventListener('touchend', (e) => {
+                const delta = startY - e.changedTouches[0].clientY;
+                if (Math.abs(delta) > 50) delta > 0 ? this.next() : this.prev();
+            }, { passive: true });
+            document.addEventListener('wheel', (e) => {
+                if (this.transitioning) return;
+                if (e.deltaY > 40) this.next(); else if (e.deltaY < -40) this.prev();
+            }, { passive: true });
+        }
+
+        createNavDots() {
+            const nav = document.getElementById('navDots');
+            if (!nav) return;
+            this.slides.forEach((slide, i) => {
+                if (this.sectionStarts.has(i)) {
+                    const sep = document.createElement('div');
+                    sep.className = 'nav-dot section-sep';
+                    nav.appendChild(sep);
+                }
+                const dot = document.createElement('button');
+                dot.className = 'nav-dot';
+                dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+                dot.addEventListener('click', () => this.goTo(i));
+                nav.appendChild(dot);
+            });
+        }
+
+        updateActiveDot() {
+            const dots = document.querySelectorAll('.nav-dot:not(.section-sep)');
+            dots.forEach((dot, i) => dot.classList.toggle('active', i === this.current));
+        }
+
+        updateChrome() {
+            if (this.counterCurrent) this.counterCurrent.textContent = this.current + 1;
+            if (this.progressBar) {
+                const pct = this.total > 1 ? (this.current / (this.total - 1)) * 100 : 100;
+                this.progressBar.style.width = pct + '%';
+            }
+            document.body.classList.toggle('on-title', this.current === 0);
+            document.body.classList.toggle('on-end', this.current === this.total - 1);
+        }
+
+        next() { if (this.current < this.total - 1) this.goTo(this.current + 1); }
+        prev() { if (this.current > 0) this.goTo(this.current - 1); }
+        goTo(i) {
+            if (i === this.current || this.transitioning) return;
+            this.transitioning = true;
+            this.slides[this.current].classList.remove('active');
+            this.slides[i].classList.add('active');
+            this.current = i;
+            history.replaceState(null, '', `#${i + 1}`);
+            this.updateActiveDot();
+            this.updateChrome();
+            setTimeout(() => { this.transitioning = false; }, 450);
+        }
+    }
+    document.addEventListener('DOMContentLoaded', () => new NoirDeck());
+</script>
+
+</body>
+</html>

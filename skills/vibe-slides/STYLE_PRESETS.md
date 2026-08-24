@@ -68,11 +68,65 @@ Two presets ship as full templates with brand assets. **When one of these is cho
 - `image-content` — episode-tag + h2 + split layout (text left, image right)
 - `end-slide` — centered logo symbol, gradient h2, subtitle
 
-### Archon Grid (HAS TEMPLATE)
+### Archon Noir (HAS TEMPLATE)
 
-**Template folder:** `templates/archon-grid/` — identical to Archon with an additional `GridGlow` canvas overlay (2 drifting light orbs that illuminate the grid lines, `requestAnimationFrame` loop). Use when the user wants a subtle animated grid glow background.
+**Template folder:** `templates/archon-noir/` (contains `template.html` + `assets/` with the Archon logos).
 
-All typography, colors, and slide types match Archon. Choose via the Phase 2 follow-up question: "No grid (clean)" → `archon/`; "With grid glow" → `archon-grid/`.
+**Vibe:** Restrained, minimalist, deep-tech — "OpenAI restraint × Apple precision." Near-black canvas, off-white type, green accent reserved only for signals (no gradient text, no grid overlay, no glow orbs). Reads as a serious technical memo rather than a marketing deck.
+
+**Layout:** Absolute-positioned slides with crossfade transitions (450ms). Right-side nav dots with section separators. Thin (2px) green progress bar at the bottom. Global footer (logo left, page counter right) hidden on the title slide. Fullscreen toggle in the top-right corner. Six slide types: title, agenda, section header, content (numbered bullets), diagram (full-width SVG), end.
+
+**Typography:**
+- All text: `Geist` (300/400/500)
+- Mono: `Geist Mono` (400/500/600)
+- Headings use weight 300–400 with tight negative letter-spacing (-0.035em to -0.045em)
+- Headings stay one solid color — no `<em>` emphasis, no gradient text
+
+**Colors:**
+```css
+:root {
+    --bg:        #050507;
+    --surface:   #0E0E11;
+    --surface-2: #16161A;
+    --hairline:  rgba(255,255,255,0.07);
+    --hairline-2:rgba(255,255,255,0.14);
+    --text:    #F5F5F7;
+    --text-2:  #A1A1A6;
+    --text-3:  #6E6E73;
+    --green:   #6DFB6E;
+    --blue:    #5AAFFF;
+    --violet:  #A78BFA;
+    --amber:   #FBBF24;
+    --coral:   #FF6B5C;
+    --accent: var(--green);
+    --accent-halo: rgba(109, 251, 110, 0.20);
+}
+```
+
+**Signature Elements:**
+- Numbered bullets (`01.`, `02.`, `03.` — auto-generated via CSS counters) separated by hairline borders
+- Hollow outlined "section pill" (Geist Mono, uppercase, wide letter-spacing) above each h1
+- "Chapter line" on section headers: number + label + fading-out gradient line
+- Right-side nav dots with thin section separators between chapters
+- Hairline-only horizontal rules — no filled cards, no glow effects on content
+- SVG diagram vocabulary: `.node-bg`, `.node-bg-accent`, `.node-bg-warn`, `.arrow`, `.arrow-dim`, `.arrow-warn`, `.node-tag`, `.node-title`, `.node-sub`, `.arrow-label`, `.arrow-label-accent`, `.scenario-label` — all themed to the noir palette
+- URL pill on the end slide (hollow, with a small accent dot)
+- Reveal stagger: 160ms increments (0.12s, 0.28s, 0.44s...) — slower and more deliberate than Archon
+
+**Animation:**
+- Slide transition: 450ms crossfade with `cubic-bezier(0.16, 1, 0.3, 1)`
+- `.reveal` children fade up 14px, staggered by `:nth-of-type`
+- No background glow, no drifting orbs, no grid overlay — motion only on slide entry
+
+**Slide Types:**
+- `s-title` — left-padded brand logo + meta tag + large h1 + byline
+- `s-agenda` — hollow section pill + h1 + linked agenda items (number, title, chip)
+- `s-section` — chapter line (`01 · Chapter · ―――`) + large h1 + sub-line
+- `s-content` — section pill + h1 + numbered bullet list with hairline rows
+- `s-diagram` — section pill + h1 + full-width inline SVG using the diagram vocabulary
+- `s-end` — centered symbol logo + h1 + sub + hollow URL pill
+
+**JS:** Section separators in the nav dots derive automatically from `.s-section` slides + the `.s-end` slide — add or remove slides without touching JavaScript.
 
 ---
 
@@ -372,7 +426,7 @@ All typography, colors, and slide types match Archon. Choose via the Phase 2 fol
 
 | Preset | Display Font | Body Font | Source |
 |--------|--------------|-----------|--------|
-| Archon / Archon Grid | Outfit | Inter | Google |
+| Archon          | Outfit | Inter | Google |
 | Bold Signal | Archivo Black | Space Grotesk | Google |
 | Electric Studio | Manrope | Manrope | Google |
 | Creative Voltage | Syne | Space Mono | Google |

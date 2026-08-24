@@ -65,10 +65,10 @@ These invariants apply to EVERY slide in EVERY presentation:
 
 ## Templates (Read Directly, Do Not Search)
 
-Two ready-made templates ship with this skill. When a template applies, **copy its folder as the starting point** rather than generating from scratch — templates bundle working HTML plus brand assets (logos, patterns).
+The **Archon** template is the standard for presentations built with this skill. Lead with it in style discovery (see Phase 2, Step 2.0) and only branch into mood-based previews or the wider preset list if the user explicitly wants something different. When the template applies, **copy its folder as the starting point** rather than generating from scratch — it bundles working HTML plus brand assets (logos, patterns).
 
-- **Archon** — `~/.claude/skills/vibe-slides/templates/archon/template.html`
-- **Archon Grid** — `~/.claude/skills/vibe-slides/templates/archon-grid/template.html` (Archon + animated grid glow)
+- **Archon** (default) — `~/.claude/skills/vibe-slides/templates/archon/template.html`
+- **Archon Noir** — `~/.claude/skills/vibe-slides/templates/archon-noir/template.html` (minimalist near-black variant of Archon; Geist + Geist Mono; restrained green accent reserved for signals; numbered-bullet content slides and full-width SVG diagram slides)
 
 Each template folder contains `template.html` plus an `assets/` directory. To use: copy both to the output directory, rename the HTML, and replace placeholder content.
 
@@ -141,18 +141,23 @@ If user provides an image folder:
 
 ### Step 2.0: Style Path
 
+**Archon is the standard.** Lead with it and only branch into mood-based discovery or the full preset list if the user wants something different.
+
 Ask how they want to choose (header: "Style"):
 
-- "Show me options" (recommended) — Generate 3 previews based on mood
-- "I know what I want" — Pick from preset list directly
+- "Use Archon (standard, recommended)" — The Archon brand template; ships with the skill and includes brand assets
+- "Show me options" — Generate 3 previews based on mood
+- "I know what I want something else" — Pick from the full preset list
 
-**If direct selection:** Show preset picker and skip to Phase 3. Available presets are defined in [STYLE_PRESETS.md](STYLE_PRESETS.md).
+**If the user picks Archon (the recommended standard, or selects it from the preset list later):** follow up with (header: "Variant"):
+"Which Archon variant?" Options:
 
-**If the user picks Archon**, follow up with (header: "Animation"):
-"Would you like animated grid glow lines in the background?" Options:
+- "Standard" → use `templates/archon/`
+- "Noir (minimalist near-black)" → use `templates/archon-noir/`
 
-- "No grid (clean)" → use `templates/archon/`
-- "With grid glow" → use `templates/archon-grid/`
+Then skip directly to Phase 3 — no mood selection or preview generation needed.
+
+**If direct selection of a non-Archon preset:** Show preset picker and skip to Phase 3. Available presets are defined in [STYLE_PRESETS.md](STYLE_PRESETS.md).
 
 ### Step 2.1: Mood Selection (Guided Discovery)
 
@@ -170,7 +175,7 @@ Based on mood, generate 3 distinct single-slide HTML previews showing typography
 
 | Mood                | Suggested Presets                                  |
 | ------------------- | -------------------------------------------------- |
-| Impressed/Confident | Archon, Bold Signal, Electric Studio, Dark Botanical |
+| Impressed/Confident | Archon, Archon Noir, Bold Signal, Electric Studio, Dark Botanical |
 | Excited/Energized   | Creative Voltage, Neon Cyber, Split Pastel         |
 | Calm/Focused        | Notebook Tabs, Paper & Ink, Swiss Modern           |
 | Inspired/Moved      | Dark Botanical, Vintage Editorial, Pastel Geometry |
@@ -194,7 +199,7 @@ Generate the full presentation using content from Phase 1 (text, or text + curat
 
 If images were provided, the slide outline already incorporates them from Step 1.2. If not, CSS-generated visuals (gradients, shapes, patterns) provide visual interest — this is a fully supported first-class path.
 
-**If the chosen style has a template (Archon / Archon Grid):** copy `templates/<name>/template.html` and its sibling `assets/` folder into the output directory as the starting point, rename the HTML, and replace placeholder slide content. The templates already satisfy viewport rules and include brand assets — do not regenerate from scratch.
+**If the chosen style is Archon or Archon Noir:** copy `templates/<name>/template.html` and its sibling `assets/` folder into the output directory as the starting point, rename the HTML, and replace placeholder slide content. The templates already satisfy viewport rules and include brand assets — do not regenerate from scratch.
 
 **Before generating from scratch (non-template styles), read these supporting files:**
 
@@ -336,7 +341,7 @@ This captures each slide as a screenshot and combines them into a PDF. Perfect f
 | [viewport-base.css](viewport-base.css)             | Mandatory responsive CSS — copy into every presentation              | Phase 3 (generation)      |
 | [html-template.md](html-template.md)               | HTML structure, JS features, code quality standards                  | Phase 3 (generation)      |
 | [animation-patterns.md](animation-patterns.md)     | CSS/JS animation snippets and effect-to-feeling guide                | Phase 3 (generation)      |
-| `templates/archon/`, `templates/archon-grid/`      | Ready-made Archon template HTML + brand assets                       | Phase 3 (if Archon chosen) |
+| `templates/archon/`, `templates/archon-noir/`      | Ready-made Archon template HTML + brand assets                       | Phase 3 (if Archon chosen) |
 | [scripts/extract-pptx.py](scripts/extract-pptx.py) | Python script for PPT content extraction                             | Phase 4 (conversion)      |
 | [scripts/deploy.sh](scripts/deploy.sh)             | Deploy slides to Vercel for instant sharing                          | Phase 6 (sharing)         |
 | [scripts/export-pdf.sh](scripts/export-pdf.sh)     | Export slides to PDF                                                 | Phase 6 (sharing)         |
