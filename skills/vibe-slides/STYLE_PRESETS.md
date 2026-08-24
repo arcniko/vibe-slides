@@ -8,7 +8,7 @@ Curated visual styles for Vibe Slides. Each preset is inspired by real design re
 
 ## Templates (Ready-Made, Copy Directly)
 
-Two presets ship as full templates with brand assets. **When one of these is chosen, copy `templates/<name>/template.html` and its `assets/` folder to the output directory instead of generating from scratch.**
+Three presets ship as full templates. **When one of these is chosen, copy `templates/<name>/template.html` (plus its `assets/` folder, if it has one) to the output directory instead of generating from scratch.**
 
 ### Archon (HAS TEMPLATE)
 
@@ -68,11 +68,131 @@ Two presets ship as full templates with brand assets. **When one of these is cho
 - `image-content` — episode-tag + h2 + split layout (text left, image right)
 - `end-slide` — centered logo symbol, gradient h2, subtitle
 
-### Archon Grid (HAS TEMPLATE)
+### Archon Noir (HAS TEMPLATE)
 
-**Template folder:** `templates/archon-grid/` — identical to Archon with an additional `GridGlow` canvas overlay (2 drifting light orbs that illuminate the grid lines, `requestAnimationFrame` loop). Use when the user wants a subtle animated grid glow background.
+**Template folder:** `templates/archon-noir/` (contains `template.html` + `assets/` with the Archon logos).
 
-All typography, colors, and slide types match Archon. Choose via the Phase 2 follow-up question: "No grid (clean)" → `archon/`; "With grid glow" → `archon-grid/`.
+**Vibe:** Restrained, minimalist, deep-tech — "OpenAI restraint × Apple precision." Near-black canvas, off-white type, green accent reserved only for signals (no gradient text, no grid overlay, no glow orbs). Reads as a serious technical memo rather than a marketing deck.
+
+**Layout:** Absolute-positioned slides with crossfade transitions (450ms). Right-side nav dots with section separators. Thin (2px) green progress bar at the bottom. Global footer (logo left, page counter right) hidden on the title slide. Fullscreen toggle in the top-right corner. Six slide types: title, agenda, section header, content (numbered bullets), diagram (full-width SVG), end.
+
+**Typography:**
+- All text: `Geist` (300/400/500)
+- Mono: `Geist Mono` (400/500/600)
+- Headings use weight 300–400 with tight negative letter-spacing (-0.035em to -0.045em)
+- Headings stay one solid color — no `<em>` emphasis, no gradient text
+
+**Colors:**
+```css
+:root {
+    --bg:        #050507;
+    --surface:   #0E0E11;
+    --surface-2: #16161A;
+    --hairline:  rgba(255,255,255,0.07);
+    --hairline-2:rgba(255,255,255,0.14);
+    --text:    #F5F5F7;
+    --text-2:  #A1A1A6;
+    --text-3:  #6E6E73;
+    --green:   #6DFB6E;
+    --blue:    #5AAFFF;
+    --violet:  #A78BFA;
+    --amber:   #FBBF24;
+    --coral:   #FF6B5C;
+    --accent: var(--green);
+    --accent-halo: rgba(109, 251, 110, 0.20);
+}
+```
+
+**Signature Elements:**
+- Numbered bullets (`01.`, `02.`, `03.` — auto-generated via CSS counters) separated by hairline borders
+- Hollow outlined "section pill" (Geist Mono, uppercase, wide letter-spacing) above each h1
+- "Chapter line" on section headers: number + label + fading-out gradient line
+- Right-side nav dots with thin section separators between chapters
+- Hairline-only horizontal rules — no filled cards, no glow effects on content
+- SVG diagram vocabulary: `.node-bg`, `.node-bg-accent`, `.node-bg-warn`, `.arrow`, `.arrow-dim`, `.arrow-warn`, `.node-tag`, `.node-title`, `.node-sub`, `.arrow-label`, `.arrow-label-accent`, `.scenario-label` — all themed to the noir palette
+- URL pill on the end slide (hollow, with a small accent dot)
+- Reveal stagger: 160ms increments (0.12s, 0.28s, 0.44s...) — slower and more deliberate than Archon
+
+**Animation:**
+- Slide transition: 450ms crossfade with `cubic-bezier(0.16, 1, 0.3, 1)`
+- `.reveal` children fade up 14px, staggered by `:nth-of-type`
+- No background glow, no drifting orbs, no grid overlay — motion only on slide entry
+
+**Slide Types:**
+- `s-title` — left-padded brand logo + meta tag + large h1 + byline
+- `s-agenda` — hollow section pill + h1 + linked agenda items (number, title, chip)
+- `s-section` — chapter line (`01 · Chapter · ―――`) + large h1 + sub-line
+- `s-content` — section pill + h1 + numbered bullet list with hairline rows
+- `s-diagram` — section pill + h1 + full-width inline SVG using the diagram vocabulary
+- `s-end` — centered symbol logo + h1 + sub + hollow URL pill
+
+**JS:** Section separators in the nav dots derive automatically from `.s-section` slides + the `.s-end` slide — add or remove slides without touching JavaScript.
+
+### Sky Sunset (HAS TEMPLATE)
+
+**Template folder:** `templates/sky-sunset/` (single self-contained `template.html`, no assets folder — the logomark is an inline SVG `<symbol id="brand-logo">`; swap its path for another brand).
+
+**Vibe:** Night-sky-at-dusk cinematic — deep navy canvas with a warm sunset gradient (gold → salmon → rose → violet) reserved for thin accents, gradient headline spans, and chapter dividers. Reads as a narrative teaching deck: calm content slides punctuated by loud full-bleed chapter breaks. Ships a full **light skin** too (white canvas, vivid cyan → blue → violet → pink gradient, blue accent) toggled live with `T`.
+
+**Architecture (differs from every other preset):** All slides are authored at a **fixed 1920×1080 stage** that JS scales to fit the window (`transform: translate(x,y) scale(factor)`), so font sizes are plain `px` — **the 100vh / clamp() viewport rules do NOT apply here**; the fixed-stage variant of the base styles is inlined in the template. The atmospheric page background paints the whole viewport, so letterbox bars match the deck instead of showing black. Includes a print stylesheet (one page per slide at 1920×1080).
+
+**Built-in functionality (all in the template's single `<script>`):**
+- **Overview (`O`)** — zooms the stage out to a width-fit grid of live thumbnails (~3 columns), scrolled vertically; arrows move the selection, click/Enter jumps, each thumbnail carries a big slide-number badge
+- **Arrange mode (`E` inside overview)** — drag thumbnails to reorder; the drop commits the new DOM order so numbering, navigation, and export all follow
+- **Theme toggle (`T` or the ◐ button, top right)** — dark ↔ light, persisted per deck in localStorage (key derived from `<title>`)
+- **Inline editing (`E`, or hover the top-left corner)** — click any text to edit, auto-persisted to localStorage; **Ctrl/Cmd+S** downloads the current DOM as a standalone HTML file
+- **Fullscreen (`F`)**, wheel + touch-swipe navigation, `#12`-style hash deep links, Home/End
+- **Agenda deep links** — agenda rows carry `data-target="Chapter 1"` and resolve to the slide with that `aria-label` at click time, so reordering can't break them; rows light up with the gradient on hover
+- **Chapter divider veil** — dividers paint the full viewport with the sunset gradient via a crossfading `.divider-veil` layer; the fixed footer (chapter name left, logo right) and counter recolor to white on top of it
+
+**Typography:**
+- Display: `Plus Jakarta Sans` (700/800), tight negative letter-spacing
+- Body: `Inter` (300/400/500/600)
+- Mono: `JetBrains Mono` (400/500/600)
+
+**Colors:**
+```css
+:root { /* dark (default) */
+    --bg:#080B1C; --surface:#131938; --surface-2:#1A2046;
+    --hairline:rgba(255,255,255,0.09); --hairline-2:rgba(255,255,255,0.16);
+    --text:#F4F6FF; --text-2:#AAB1D8; --text-3:#757CA6;
+    --accent:#FF9772;              /* warm salmon */
+    --mint:#FFC98A; --gold:#FFC04A; --pink:#F26FE6;
+    --grad: linear-gradient(108deg, #FFD37E 0%, #FF9D5C 32%, #F0647D 66%, #A85CE0 100%);
+    --grad-div: linear-gradient(170deg, #0A0D24 0%, #131539 28%, #33205A 52%, #6A2E63 70%, #B04E52 85%, #E8894E 100%);
+}
+body.light { /* light skin, toggled with T */
+    --bg:#FFFFFF; --text:#12162E; --accent:#1E7BE6;
+    --grad: linear-gradient(108deg, #1FE0FF 0%, #2F7BFF 30%, #A273FF 64%, #F26FE6 100%);
+}
+```
+
+**Signature Elements:**
+- `.grad` headline spans — gradient-clipped text inside otherwise solid headings
+- `.kicker` — small uppercase display-font eyebrow with a leading accent bar
+- One loud text layer (white semibold leads/bullets/panels) + one quiet layer (captions, subs) — no bold-vs-thin patchwork
+- `.syn` terminal card — gradient top border, dot + filename header row (optionally with a right-aligned link), themed token classes `c/s/v/k/n/g` that re-color in light mode
+- `.panel` cards (`cols two`/`cols three`), one `.accent` panel max per slide, optional `.verdict` ✓/✕ footer rows
+- `.timeline` with a gradient bar on the `.hot` (current) item
+- `.flow` HTML boxes-and-arrows with a quietly accented `.hub` box
+- `.dg` SVG figure vocabulary: `node` / `node-accent` / `node-hub` (gradient stroke via `#hubStroke`) / `node-warn`, `chip` pills, `tag/ttl/sub` text stacks, `arrow`/`arrow-accent`/`arrow-warn` with `ar-n`/`ar-a`/`ar-w` markers, `alabel` edge labels — all riding `--dg-*` tokens so figures re-skin in light mode
+- `.recap` card — accent left-border summary box for chapter recaps
+- Speaker notes as `<!-- notes: … -->` comments above each slide
+
+**Animation:** One smooth whole-slide crossfade per slide change (650ms) — no per-element movement; the stage transform eases with `cubic-bezier(0.16, 1, 0.3, 1)` (560ms) when scaling.
+
+**Slide Types:**
+- `s-title` — logomark + 92px h1 with gradient span + byline + keyboard-hint line
+- agenda — lead + deep-linking `agenda-list` rows (num / label / hint)
+- content — kicker + h1 + lead/bullets/caption in any mix
+- panels — `cols two` or `cols three` of `.panel` cards, comparison variant with verdicts
+- code — `.syn` terminal card + bullets
+- timeline — 4 `.t-item` columns, last one `.hot`
+- flow — HTML `.flow` pipeline
+- diagram — full-width `.dg` SVG figure
+- recap — bullets + `.recap` card
+- `s-divider` — full-bleed gradient chapter break (ch-num / h1 / ch-sub)
+- `s-end` — centered logo + gradient close + link line
 
 ---
 
@@ -372,7 +492,8 @@ All typography, colors, and slide types match Archon. Choose via the Phase 2 fol
 
 | Preset | Display Font | Body Font | Source |
 |--------|--------------|-----------|--------|
-| Archon / Archon Grid | Outfit | Inter | Google |
+| Archon          | Outfit | Inter | Google |
+| Sky Sunset      | Plus Jakarta Sans | Inter | Google |
 | Bold Signal | Archivo Black | Space Grotesk | Google |
 | Electric Studio | Manrope | Manrope | Google |
 | Creative Voltage | Syne | Space Mono | Google |
