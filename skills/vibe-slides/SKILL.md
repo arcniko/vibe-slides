@@ -69,8 +69,9 @@ The **Archon** template is the standard for presentations built with this skill.
 
 - **Archon** (default) — `~/.claude/skills/vibe-slides/templates/archon/template.html`
 - **Archon Noir** — `~/.claude/skills/vibe-slides/templates/archon-noir/template.html` (minimalist near-black variant of Archon; Geist + Geist Mono; restrained green accent reserved for signals; numbered-bullet content slides and full-width SVG diagram slides)
+- **Sky Sunset** — `~/.claude/skills/vibe-slides/templates/sky-sunset/template.html` (deep-navy night sky with a warm sunset gradient, plus a full light skin toggled with T; overview grid with drag-to-reorder, inline editing with Ctrl+S export, agenda deep links, print stylesheet; single self-contained file, no assets folder. **Fixed-stage architecture:** slides are authored at 1920×1080 in plain px and JS scales the stage to the window — the 100vh/clamp() viewport rules and viewport-base.css do NOT apply to this template)
 
-Each template folder contains `template.html` plus an `assets/` directory. To use: copy both to the output directory, rename the HTML, and replace placeholder content.
+Each template folder contains `template.html` (plus an `assets/` directory, if it has one). To use: copy the folder contents to the output directory, rename the HTML, and replace placeholder content.
 
 ---
 
@@ -146,6 +147,7 @@ If user provides an image folder:
 Ask how they want to choose (header: "Style"):
 
 - "Use Archon (standard, recommended)" — The Archon brand template; ships with the skill and includes brand assets
+- "Use Sky Sunset" — The night-sky/sunset template with a built-in light mode; ships with the skill
 - "Show me options" — Generate 3 previews based on mood
 - "I know what I want something else" — Pick from the full preset list
 
@@ -156,6 +158,8 @@ Ask how they want to choose (header: "Style"):
 - "Noir (minimalist near-black)" → use `templates/archon-noir/`
 
 Then skip directly to Phase 3 — no mood selection or preview generation needed.
+
+**If the user picks Sky Sunset** (directly or from the preset list): use `templates/sky-sunset/` and skip to Phase 3 the same way.
 
 **If direct selection of a non-Archon preset:** Show preset picker and skip to Phase 3. Available presets are defined in [STYLE_PRESETS.md](STYLE_PRESETS.md).
 
@@ -175,10 +179,10 @@ Based on mood, generate 3 distinct single-slide HTML previews showing typography
 
 | Mood                | Suggested Presets                                  |
 | ------------------- | -------------------------------------------------- |
-| Impressed/Confident | Archon, Archon Noir, Bold Signal, Electric Studio, Dark Botanical |
+| Impressed/Confident | Archon, Archon Noir, Sky Sunset, Bold Signal, Electric Studio, Dark Botanical |
 | Excited/Energized   | Creative Voltage, Neon Cyber, Split Pastel         |
 | Calm/Focused        | Notebook Tabs, Paper & Ink, Swiss Modern           |
-| Inspired/Moved      | Dark Botanical, Vintage Editorial, Pastel Geometry |
+| Inspired/Moved      | Sky Sunset, Dark Botanical, Vintage Editorial, Pastel Geometry |
 
 Save previews to `.claude-design/slide-previews/` (style-a.html, style-b.html, style-c.html). Each should be self-contained, ~50-100 lines, showing one animated title slide.
 
@@ -199,7 +203,9 @@ Generate the full presentation using content from Phase 1 (text, or text + curat
 
 If images were provided, the slide outline already incorporates them from Step 1.2. If not, CSS-generated visuals (gradients, shapes, patterns) provide visual interest — this is a fully supported first-class path.
 
-**If the chosen style is Archon or Archon Noir:** copy `templates/<name>/template.html` and its sibling `assets/` folder into the output directory as the starting point, rename the HTML, and replace placeholder slide content. The templates already satisfy viewport rules and include brand assets — do not regenerate from scratch.
+**If the chosen style is Archon, Archon Noir, or Sky Sunset:** copy `templates/<name>/template.html` (and its sibling `assets/` folder, if present) into the output directory as the starting point, rename the HTML, and replace placeholder slide content. The templates already handle viewport fitting — do not regenerate from scratch.
+
+**Sky Sunset only:** author all slide content at the fixed 1920×1080 stage in plain px (the stage scales to the window) — do NOT add viewport-base.css or convert sizes to clamp(). Keep every slide's `aria-label` unique (agenda rows deep-link by it), set `data-chapter` on content slides for the footer, and write speaker notes as `<!-- notes: … -->` comments above each slide.
 
 **Before generating from scratch (non-template styles), read these supporting files:**
 
@@ -341,7 +347,7 @@ This captures each slide as a screenshot and combines them into a PDF. Perfect f
 | [viewport-base.css](viewport-base.css)             | Mandatory responsive CSS — copy into every presentation              | Phase 3 (generation)      |
 | [html-template.md](html-template.md)               | HTML structure, JS features, code quality standards                  | Phase 3 (generation)      |
 | [animation-patterns.md](animation-patterns.md)     | CSS/JS animation snippets and effect-to-feeling guide                | Phase 3 (generation)      |
-| `templates/archon/`, `templates/archon-noir/`      | Ready-made Archon template HTML + brand assets                       | Phase 3 (if Archon chosen) |
+| `templates/archon/`, `templates/archon-noir/`, `templates/sky-sunset/` | Ready-made template HTML (+ brand assets where present)              | Phase 3 (if a template chosen) |
 | [scripts/extract-pptx.py](scripts/extract-pptx.py) | Python script for PPT content extraction                             | Phase 4 (conversion)      |
 | [scripts/deploy.sh](scripts/deploy.sh)             | Deploy slides to Vercel for instant sharing                          | Phase 6 (sharing)         |
 | [scripts/export-pdf.sh](scripts/export-pdf.sh)     | Export slides to PDF                                                 | Phase 6 (sharing)         |

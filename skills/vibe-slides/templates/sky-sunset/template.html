@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presentation Title</title>
+
+<!-- Plus Jakarta Sans (display) + Inter (body) + JetBrains Mono (code). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   SKY SUNSET THEME, dark default + light skin.
+   All slide content is authored at a fixed 1920×1080 stage.
+   Change look via the :root custom properties below.
+   ============================================================ */
+:root {
+    /* === DARK (default) === */
+    --bg:        #080B1C;
+    --surface:   #131938;
+    --surface-2: #1A2046;
+    --hairline:  rgba(255,255,255,0.09);
+    --hairline-2:rgba(255,255,255,0.16);
+
+    --text:   #F4F6FF;
+    --text-2: #AAB1D8;
+    --text-3: #757CA6;
+
+    --cyan:#1FE0FF; --blue:#2F7BFF; --indigo:#4331E9; --violet:#A273FF;
+    --pink:#F26FE6; --gold:#FFC04A; --mint:#FFC98A;
+
+    /* dark mode accent: warm salmon, night-sky-at-dusk */
+    --accent: #FF9772;
+    --accent-halo: rgba(255,151,114,0.22);
+
+    /* sunset gradient for thin accents (code-card border, progress, dots) */
+    --grad: linear-gradient(108deg, #FFD37E 0%, #FF9D5C 32%, #F0647D 66%, #A85CE0 100%);
+    --grad-text: linear-gradient(108deg, #FFD98C, #FF9D5C 35%, #F2708A 70%, #C77DFF);
+    /* chapter dividers: night sky falling into a just-before-sunset horizon */
+    --grad-div: linear-gradient(170deg, #0A0D24 0%, #131539 28%, #33205A 52%, #6A2E63 70%, #B04E52 85%, #E8894E 100%);
+
+    --page-bg:
+        radial-gradient(72% 56% at 86% -4%, rgba(47,123,255,0.10), transparent 60%),
+        radial-gradient(64% 42% at 50% 112%, rgba(238,137,78,0.12), transparent 62%),
+        linear-gradient(165deg, #0B0F2A 0%, #080B1C 60%, #06080F 100%);
+
+    /* code panel */
+    --syn-bg: linear-gradient(180deg, #12173A, #0A0D22);
+    --syn-text:#CCD2F0;
+
+    /* diagram tokens */
+    --dg-node:#131938; --dg-stroke:rgba(255,255,255,0.17);
+    --dg-text:#F4F6FF; --dg-sub:#AAB1D8; --dg-arrow:#7077A0;
+    --dg-accent-fill:rgba(255,151,114,0.09); --dg-hub-fill:rgba(162,115,255,0.10);
+    --dg-chip:rgba(255,255,255,0.04); --dg-mesh:rgba(255,255,255,0.13);
+    /* hub-node stroke gradient (sunset in dark, sky vivid in light) */
+    --hub-g1:#FFD37E; --hub-g2:#F2708A; --hub-g3:#A85CE0;
+
+    --display:'Plus Jakarta Sans', sans-serif;
+    --body:'Inter', sans-serif;
+    --mono:'JetBrains Mono', monospace;
+
+    --stage-bg:#000;
+    --slide-bg:transparent;
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+body.light {
+    --bg:#FFFFFF;
+    --surface:#F4F6FE; --surface-2:#EAEEFB;
+    --hairline:rgba(16,22,52,0.10); --hairline-2:rgba(16,22,52,0.17);
+    --text:#12162E; --text-2:#4C5478; --text-3:#8A90B4;
+    --accent:#1E7BE6; --accent-halo:rgba(30,123,230,0.18);
+    --mint:#0E9E86; --gold:#C8861E;
+    --grad: linear-gradient(108deg, #1FE0FF 0%, #2F7BFF 30%, #A273FF 64%, #F26FE6 100%);
+    --grad-div: linear-gradient(108deg, #1FE0FF 0%, #2F7BFF 30%, #A273FF 64%, #F26FE6 100%);
+    --grad-text: linear-gradient(108deg, #0096D8, #2F6BFF 38%, #7A3FE0 72%, #C13BB0);
+    --page-bg:
+        radial-gradient(68% 58% at 86% -6%, rgba(162,115,255,0.22), transparent 60%),
+        radial-gradient(60% 52% at 0% 106%, rgba(31,200,245,0.20), transparent 60%),
+        linear-gradient(155deg, #FBFCFF 0%, #EEF1FC 52%, #F4EDFB 100%);
+    --syn-bg: linear-gradient(180deg,#FBFCFF,#EDF0FA);
+    --syn-text:#2A3052;
+    --dg-node:#FFFFFF; --dg-stroke:rgba(16,22,52,0.16);
+    --dg-text:#12162E; --dg-sub:#4C5478; --dg-arrow:#9AA0C4;
+    --dg-accent-fill:rgba(30,123,230,0.07); --dg-hub-fill:rgba(122,63,224,0.07);
+    --dg-chip:rgba(16,22,52,0.04); --dg-mesh:rgba(16,22,52,0.13);
+    --hub-g1:#1FE0FF; --hub-g2:#A273FF; --hub-g3:#F26FE6;
+    --stage-bg:#E9ECF7;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+/* ===========================================
+   FIXED 16:9 STAGE: MANDATORY BASE STYLES
+   (fixed-stage variant of viewport-base.css)
+   =========================================== */
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+.deck-viewport {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+.deck-stage {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    transform-origin: 0 0;
+    background: var(--slide-bg, #fff);
+}
+.slide {
+    position: absolute;
+    inset: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    display: block;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    background: var(--slide-bg, #fff);
+}
+.slide.active,
+.slide.visible {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 1;
+}
+img, video, canvas, svg { max-width: 100%; max-height: 100%; }
+.deck-controls {
+    position: fixed;
+    left: 50%;
+    bottom: 22px;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
+@media print {
+    html, body { width: 1920px; height: auto; overflow: visible; background: #fff; }
+    .deck-viewport { position: static; overflow: visible; background: #fff; }
+    .deck-stage { position: static; width: auto; height: auto; transform: none !important; background: none; }
+    .slide {
+        position: relative; display: block !important; visibility: visible !important;
+        opacity: 1 !important; pointer-events: auto !important;
+        width: 1920px; height: 1080px; break-after: page; page-break-after: always;
+    }
+    .slide:last-child { break-after: auto; page-break-after: auto; }
+    .deck-controls { display: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+    }
+}
+
+/* ===========================================
+   STAGE ATMOSPHERE + FRAMEWORK
+   The atmospheric backdrop paints the WHOLE viewport, so scaling
+   letterboxes show the same background instead of black bars.
+   =========================================== */
+.deck-viewport { background: var(--page-bg); transition: background .4s ease; }
+.divider-veil { position:absolute; inset:0; background:var(--grad-div); opacity:0; transition:opacity .65s ease; pointer-events:none; }
+body.on-divider .divider-veil { opacity:1; }
+.deck-stage { background: transparent; font-family: var(--body); color: var(--text);
+    transition: transform 560ms var(--ease-out-expo); }
+.slide { padding: 96px 150px 130px; transition: opacity 650ms ease; }
+
+/* ===========================================
+   OVERVIEW MODE (O): the stage zooms out to a width-fit grid of
+   every slide; JS lays thumbnails out via per-slide translate and
+   scales the whole stage. Scroll vertically; click or Enter jumps.
+   Only the stage transform animates: per-slide transitions are off
+   here so dozens of thumbnails don't each run their own animation.
+   =========================================== */
+body.overview .deck-viewport { overflow-y: auto; overflow-x: hidden; }
+body.overview .deck-stage { overflow: visible; }
+.ov-spacer { display: none; width: 1px; }
+body.overview .ov-spacer { display: block; }
+body.overview .slide {
+    visibility: visible; opacity: 1; pointer-events: auto; cursor: pointer;
+    background: var(--bg);
+    outline: 6px solid var(--hairline-2);
+    transition: none;
+}
+body.overview .s-divider { background: var(--grad-div); }
+body.overview .slide:hover { outline: 18px solid var(--accent-halo); }
+body.overview .slide.active, body.overview .slide.active:hover { outline: 18px solid var(--accent); }
+body.overview .divider-veil { opacity: 0; }
+/* thumbnails carry their own numbers; the per-slide footer chrome is just noise here */
+body.overview .deck-foot, body.overview .counter { display: none; }
+/* slide number badge on each thumbnail */
+body.overview .slide::after {
+    content: attr(data-idx);
+    position: absolute; right: 44px; bottom: 32px;
+    font: 600 88px/1 var(--mono); color: var(--text-3);
+}
+body.overview .s-divider::after { color: rgba(255,255,255,.85); }
+/* arrange mode (E while in overview): drag thumbnails to reorder */
+body.overview.arrange .slide { cursor: grab; touch-action: none; user-select: none; transition: transform .25s ease; }
+body.overview .slide.dragging { cursor: grabbing; z-index: 10; outline: 18px solid var(--accent); transition: none; }
+.slide-inner { height:100%; display:flex; flex-direction:column; }
+.slide .body { flex:1; display:flex; flex-direction:column; justify-content:center; gap:28px; min-height:0; }
+
+/* Slide change: one smooth whole-page crossfade. No per-element movement. */
+.reveal { opacity:1; transform:none; }
+
+/* ===========================================
+   TYPE
+   =========================================== */
+h1,h2 { font-family:var(--display); font-weight:800; line-height:1.06; letter-spacing:-0.03em; color:var(--text); }
+.slide h1 { font-size:58px; max-width:1250px; }
+.grad { background:var(--grad-text); -webkit-background-clip:text; background-clip:text;
+        -webkit-text-fill-color:transparent; color:transparent; }
+
+.kicker { display:inline-flex; align-items:center; gap:14px; width:fit-content;
+    font-family:var(--display); font-weight:700; font-size:22px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--accent); margin-bottom:22px; }
+.kicker::before { content:''; width:34px; height:3px; border-radius:2px; background:var(--accent); }
+
+/* body copy is uniformly white + semibold: one loud layer (bullets, leads,
+   panels), one quiet layer (captions, subs), no bold-vs-thin patchwork */
+.lead { font-weight:500; color:var(--text); font-size:30px; line-height:1.5; max-width:1150px; }
+.lead strong { color:var(--text); font-weight:600; }
+.caption { font-weight:400; font-size:22px; color:var(--text-2); line-height:1.55; max-width:1250px; }
+.caption .hl { color:var(--mint); font-weight:600; }
+/* light mode: the warm highlight clashes with the vivid palette, use the accent blue */
+body.light .caption .hl { color:var(--accent); }
+/* a caption sitting under a centered figure reads best centered too */
+.caption.ctr { text-align:center; align-self:center; }
+.mono-note { font-family:var(--mono); font-size:20px; letter-spacing:.06em; color:var(--text-3); }
+/* inline code token inside body copy */
+.tok { font-family:var(--mono); font-size:.82em; letter-spacing:.02em; font-weight:600; color:var(--accent); }
+
+/* bullets, calm single-accent marker */
+.bullets { list-style:none; max-width:1250px; display:flex; flex-direction:column; gap:24px; }
+.bullets li { position:relative; padding-left:44px; font-weight:600; font-size:29px; line-height:1.45; color:var(--text); }
+.bullets li::before { content:''; position:absolute; left:4px; top:15px; width:11px; height:11px; border-radius:50%; background:var(--accent); }
+.bullets li strong { color:var(--text); font-weight:600; }
+.bullets li .dim { color:var(--text-3); }
+
+/* ===========================================
+   LOGOMARK, monochrome, sparing
+   =========================================== */
+.logo { display:block; flex:none; color:var(--text); }
+.logo-title { width:72px; height:72px; }
+.logo-foot { width:26px; height:26px; opacity:.9; }
+.logo-end { width:130px; height:130px; filter:drop-shadow(0 6px 22px rgba(0,0,0,0.22)); }
+.s-divider .logo, .s-end .logo { color:#fff; }
+
+/* fixed footer chrome (outside stage): chapter left, logo right, always at screen bottom */
+.deck-foot { position:fixed; left:26px; right:26px; bottom:14px; z-index:1001;
+    display:flex; justify-content:space-between; align-items:center; pointer-events:none;
+    font-family:var(--mono); font-size:13px; letter-spacing:.18em; text-transform:uppercase;
+    color:rgba(140,148,190,.9); transition:color .4s ease; }
+.deck-foot .logo { width:20px; height:20px; color:rgba(140,148,190,.9); transition:color .4s ease; }
+body.on-divider .deck-foot, body.on-divider .deck-foot .logo { color:rgba(255,255,255,.9); }
+body.on-divider .counter { color:rgba(255,255,255,.85); }
+
+/* ===========================================
+   CODE PANEL (.syn), terminal card
+   =========================================== */
+.syn { border:1px solid var(--hairline-2); border-radius:16px; background:var(--syn-bg);
+    overflow:hidden; max-width:1250px; box-shadow:0 8px 24px rgba(0,0,0,.28); position:relative; }
+body.light .syn { box-shadow:0 8px 24px rgba(16,22,52,.12); }
+.syn::before { content:''; position:absolute; left:0; top:0; right:0; height:3px; background:var(--grad); }
+.syn-head { display:flex; align-items:center; gap:10px; font-family:var(--mono); font-size:16px;
+    letter-spacing:.2em; text-transform:uppercase; color:var(--text-3);
+    padding:14px 26px; border-bottom:1px solid var(--hairline); }
+.syn-head .dot { width:9px; height:9px; border-radius:50%; background:var(--grad); }
+.syn-head a { margin-left:auto; color:var(--accent); text-decoration:none; font-weight:600; letter-spacing:.04em; }
+.syn-head a:hover { text-decoration:underline; }
+.caption a, .mono-note a, .lead a { color:var(--accent); text-decoration:none; }
+.caption a:hover, .mono-note a:hover, .lead a:hover { text-decoration:underline; }
+.syn pre { margin:0; padding:26px 34px; overflow-x:auto; }
+.syn code { font-family:var(--mono); font-weight:400; font-size:25px; line-height:1.66; color:var(--syn-text); white-space:pre; display:block; }
+/* token colors: c=comment s=state/atom v=variable k=keyword n=number g=result */
+.syn.tight pre { padding:20px 30px; }
+.syn.tight code { font-size:23px; line-height:1.56; }
+.syn .c{color:#5A6499;font-style:italic} .syn .s{color:#FFAB91} .syn .v{color:#86B0FF}
+.syn .k{color:#B79BFF} .syn .n{color:#FFC04A} .syn .g{color:#FF8A66;font-weight:600}
+body.light .syn .c{color:#7E84A6} body.light .syn .s{color:#0E9E86} body.light .syn .v{color:#2563C7}
+body.light .syn .k{color:#7A3FE0} body.light .syn .n{color:#B5791A} body.light .syn .g{color:#0E84BE}
+
+/* ===========================================
+   PANELS / CARDS / COMPARISON LAYOUTS
+   =========================================== */
+.cols { display:grid; gap:36px; align-items:stretch; }
+.cols.two { grid-template-columns:1fr 1fr; }
+.cols.three { grid-template-columns:1fr 1fr 1fr; }
+.panel { border:1px solid var(--hairline-2); border-radius:20px; background:var(--surface);
+    padding:40px 44px; display:flex; flex-direction:column; gap:16px; }
+.panel .p-kick { font-family:var(--mono); font-size:17px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); }
+.panel h3 { font-family:var(--display); font-weight:700; font-size:40px; letter-spacing:-0.02em; color:var(--text); }
+.panel p { font-weight:500; font-size:24px; line-height:1.5; color:var(--text); }
+.panel p strong { color:var(--text); font-weight:600; }
+.panel.accent { border-color:var(--accent-halo); background:linear-gradient(180deg, var(--dg-accent-fill), transparent 70%), var(--surface); }
+.panel .verdict { margin-top:auto; padding-top:18px; border-top:1px solid var(--hairline);
+    font-family:var(--mono); font-size:18px; letter-spacing:.04em;
+    display:flex; gap:20px; flex-wrap:wrap; }
+.verdict span { white-space:nowrap; }
+.verdict .yes { color:var(--mint); font-weight:600; } .verdict .no { color:var(--pink); font-weight:600; }
+
+/* timeline (lineage slide) */
+.timeline { display:flex; align-items:stretch; gap:0; max-width:1550px; }
+.t-item { flex:1; position:relative; padding:34px 34px 0 0; }
+.t-item::before { content:''; position:absolute; top:0; left:0; right:14px; height:3px; border-radius:3px; background:var(--hairline-2); }
+.t-item.hot::before { background:var(--grad); }
+.t-year { font-family:var(--mono); font-size:19px; letter-spacing:.14em; color:var(--text-3); margin-bottom:10px; }
+.t-item h3 { font-family:var(--display); font-weight:700; font-size:34px; color:var(--text); margin-bottom:10px; }
+.t-item p { font-weight:500; font-size:22px; line-height:1.45; color:var(--text); }
+
+/* flow diagram (HTML boxes + arrows) */
+.flow { display:flex; align-items:center; gap:22px; flex-wrap:nowrap; }
+.flow .fbox { border:1px solid var(--dg-stroke); background:var(--dg-node); border-radius:16px;
+    padding:26px 32px; text-align:center; min-width:200px; }
+.flow .fbox .fk { font-family:var(--mono); font-size:16px; letter-spacing:.16em; text-transform:uppercase; color:var(--text-3); display:block; margin-bottom:8px; }
+.flow .fbox .fv { font-family:var(--display); font-weight:700; font-size:28px; color:var(--dg-text); }
+.flow .fbox .fs { display:block; font-size:19px; color:var(--dg-sub); margin-top:6px; font-weight:300; }
+.flow .farr { font-size:34px; color:var(--dg-arrow); flex:none; }
+.flow .fbox.hub { border-color:var(--accent-halo); background:linear-gradient(180deg, var(--dg-accent-fill), transparent), var(--dg-node); }
+
+/* SVG figure vocabulary (nodes, chips, arrows), shared by all diagram slides.
+   Markers ar-n / ar-a / ar-w and the hubStroke gradient live in the hidden
+   defs SVG at the top of <body>. All colors ride the --dg-* theme tokens. */
+.dg { display:block; }
+.dg .node        { fill:var(--dg-node); stroke:var(--dg-stroke); stroke-width:1.5; }
+.dg .node-accent { fill:var(--dg-accent-fill); stroke:var(--accent); stroke-width:2; }
+.dg .node-hub    { fill:var(--dg-hub-fill); stroke:url(#hubStroke); stroke-width:3; }
+.dg .node-warn   { fill:color-mix(in srgb, var(--gold) 9%, transparent); stroke:var(--gold); stroke-width:1.8; }
+.dg .chip        { fill:var(--dg-chip); stroke:var(--dg-stroke); stroke-width:1; }
+.dg .tag  { font-family:var(--mono); font-size:17px; letter-spacing:2.4px; font-weight:600; text-transform:uppercase; fill:var(--accent); text-anchor:middle; }
+.dg .tag-dim { fill:var(--dg-sub); }
+.dg .ttl  { font-family:var(--display); font-weight:700; font-size:28px; fill:var(--dg-text); text-anchor:middle; letter-spacing:-0.01em; }
+.dg .ttl-lg { font-size:34px; font-weight:800; }
+.dg .sub  { font-family:var(--body); font-weight:300; font-size:19px; fill:var(--dg-sub); text-anchor:middle; }
+.dg .mono { font-family:var(--mono); font-size:19px; fill:var(--dg-text); }
+.dg .mono-c { text-anchor:middle; }
+.dg .arrow        { stroke:var(--dg-arrow); stroke-width:2.5; fill:none; }
+.dg .arrow-accent { stroke:var(--accent); stroke-width:2.75; fill:none; }
+.dg .arrow-warn   { stroke:var(--gold); stroke-width:2.5; fill:none; }
+.dg .alabel { font-family:var(--mono); font-weight:500; font-size:16px; fill:var(--accent); text-anchor:middle; letter-spacing:1px; text-transform:uppercase; }
+.dg .alabel-dim { fill:var(--dg-sub); }
+.dg .mesh-dot  { fill:var(--dg-node); stroke:var(--dg-stroke); stroke-width:1.5; }
+.dg .mesh-line { stroke:var(--dg-mesh); stroke-width:1.25; }
+.dg .lock { fill:none; stroke:var(--accent); stroke-width:2.5; }
+.dg .cap  { font-family:var(--body); font-weight:300; font-size:19.5px; fill:var(--dg-sub); text-anchor:middle; }
+.dg .dash { stroke:var(--dg-stroke); stroke-width:1.5; stroke-dasharray:5 6; fill:none; }
+.dg .vk { font-family:var(--mono); font-size:17px; font-weight:600; text-anchor:middle; }
+.dg .vk-yes { fill:var(--mint); } .dg .vk-no { fill:var(--pink); }
+.mk-n{fill:var(--dg-arrow)} .mk-a{fill:var(--accent)} .mk-w{fill:var(--gold)}
+
+/* agenda */
+.agenda-list { display:flex; flex-direction:column; max-width:1350px; margin-top:8px; }
+.agenda-item { display:grid; grid-template-columns:80px 1fr auto; align-items:center; column-gap:34px;
+    padding:26px 0; border-bottom:1px solid var(--hairline); }
+.agenda-item .num { font-family:var(--mono); font-size:26px; color:var(--text-3); }
+.agenda-item .label { font-family:var(--display); font-weight:700; font-size:38px; letter-spacing:-0.02em; color:var(--text); }
+.agenda-item .hint { font-weight:300; font-size:23px; color:var(--text-3); }
+/* agenda rows deep-link to their chapter dividers; the gradient marks the hover */
+body:not(.editing) .agenda-item[data-target] { cursor:pointer; }
+body:not(.editing) .agenda-item[data-target]:hover { border-image:var(--grad) 1; border-image-width:0 0 1px 0; }
+body:not(.editing) .agenda-item[data-target]:hover .label {
+    background:var(--grad-text); -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent; color:transparent; }
+body:not(.editing) .agenda-item[data-target]:hover .num { color:var(--accent); }
+
+/* ===========================================
+   SPECIAL SLIDES
+   =========================================== */
+/* Title */
+.s-title .slide-inner { justify-content:center; gap:34px; padding-left:60px; }
+.s-title .meta { font-family:var(--mono); font-size:23px; letter-spacing:.3em; text-transform:uppercase;
+    color:var(--accent); font-weight:500; display:inline-flex; align-items:center; gap:16px; }
+.s-title .meta::before { content:''; width:28px; height:2px; border-radius:2px; background:var(--accent); }
+.s-title h1 { font-size:92px; letter-spacing:-0.035em; max-width:1500px; }
+.s-title .byline { font-weight:300; font-size:30px; color:var(--text-2); max-width:1100px; line-height:1.5; }
+.keyhint { font-family:var(--mono); font-size:18px; letter-spacing:.12em; color:var(--text-3); text-transform:uppercase; }
+.keyhint b { color:var(--text-2); font-weight:600; }
+
+/* Chapter dividers, the one place the full gradient goes loud */
+.s-divider { padding:0; }
+.s-divider .slide-inner { padding:96px 150px; justify-content:space-between; color:#fff; }
+/* the divider background is painted by .divider-veil across the WHOLE viewport */
+.s-divider .ch-num { font-family:var(--mono); font-size:26px; letter-spacing:.34em; color:rgba(255,255,255,.85); text-transform:uppercase; }
+.s-divider h1 { color:#fff; font-size:110px; letter-spacing:-0.035em; max-width:1450px; }
+.s-divider .ch-sub { font-weight:400; font-size:32px; color:rgba(255,255,255,.88); max-width:1000px; line-height:1.5; margin-top:34px; }
+
+/* End slide */
+.s-end .slide-inner { align-items:center; justify-content:center; text-align:center; gap:30px; }
+.s-end h1 { font-size:80px; }
+.s-end .byline { font-weight:300; font-size:30px; color:var(--text-2); max-width:1150px; line-height:1.5; }
+
+/* summary slides get a subtle full-width accent card */
+.recap { border:1px solid var(--hairline-2); border-left:5px solid var(--accent); border-radius:18px;
+    background:var(--surface); padding:36px 44px; max-width:1350px; }
+.recap p { font-weight:500; font-size:26px; line-height:1.55; color:var(--text); }
+.recap p strong { color:var(--text); font-weight:600; }
+
+/* ===========================================
+   DECK CHROME (outside stage): progress, counter, controls
+   =========================================== */
+.progress { position:fixed; left:0; top:0; height:4px; width:0%; background:var(--grad); z-index:1001; transition:width .35s var(--ease-out-expo); }
+.counter { position:fixed; left:50%; transform:translateX(-50%); bottom:14px; z-index:1001;
+    font-family:var(--mono); font-size:13px; letter-spacing:.18em; color:rgba(140,148,190,.9); }
+.theme-toggle { position:fixed; right:26px; top:20px; z-index:1001; cursor:pointer;
+    width:40px; height:40px; border-radius:50%; border:1px solid rgba(140,148,190,.4);
+    background:transparent; color:rgba(170,177,216,.95); font-size:17px; line-height:1;
+    display:grid; place-items:center; transition:border-color .25s ease; }
+.theme-toggle:hover { border-color:rgba(170,177,216,.9); }
+
+/* ===========================================
+   INLINE EDITING (hover top-left corner or press E)
+   =========================================== */
+.edit-hotzone { position:fixed; top:0; left:0; width:80px; height:80px; z-index:10000; cursor:pointer; }
+.edit-toggle { position:fixed; top:18px; left:18px; z-index:10001; width:44px; height:44px;
+    border-radius:50%; border:1px solid rgba(140,148,190,.5); background:rgba(19,25,56,.85);
+    color:#fff; font-size:18px; cursor:pointer;
+    opacity:0; pointer-events:none; transition:opacity .3s ease; }
+.edit-toggle.show, .edit-toggle.active { opacity:1; pointer-events:auto; }
+.edit-toggle.active { border-color:#36D2F5; box-shadow:0 0 0 3px rgba(54,210,245,.25); }
+body.editing [contenteditable="true"] { outline:1px dashed rgba(54,210,245,.6); outline-offset:4px; }
+
+/* save feedback toast (Ctrl/Cmd+S) */
+.save-toast { position:fixed; left:50%; bottom:60px; transform:translateX(-50%) translateY(8px); z-index:10002;
+    font-family:var(--mono); font-size:14px; letter-spacing:.08em; color:var(--text);
+    background:var(--surface); border:1px solid var(--hairline-2); border-radius:10px; padding:10px 18px;
+    opacity:0; pointer-events:none; transition:opacity .3s ease, transform .3s ease; }
+.save-toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- Logomark + shared figure defs, referenced with <use>/url() wherever they appear.
+     The #brand-logo symbol below is the Sky logomark; swap the path for your brand
+     (keep fill="currentColor" so .logo color rules keep working). -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="hubStroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" style="stop-color:var(--hub-g1)"/><stop offset=".5" style="stop-color:var(--hub-g2)"/><stop offset="1" style="stop-color:var(--hub-g3)"/>
+    </linearGradient>
+    <marker id="ar-n" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="mk-n" d="M0,0 L10,5 L0,10 Z"/></marker>
+    <marker id="ar-a" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="mk-a" d="M0,0 L10,5 L0,10 Z"/></marker>
+    <marker id="ar-w" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="mk-w" d="M0,0 L10,5 L0,10 Z"/></marker>
+  </defs>
+  <symbol id="brand-logo" viewBox="0 0 483.1820068 483.1820068"><path fill="currentColor" d="M46.139843,99.5872421c29.9881935-41.2751694,72.2731934-71.9972534,120.7951813-87.7629395c48.5220032-15.7657404,100.789978-15.7657299,149.3119812,0l-74.6559753,229.7663574L46.139843,99.5872421z M26.3318462,351.2705994C11.9284477,323.002594,3.2339683,292.1746216,0.7447636,260.5456238c-2.4892147-31.6279602,1.275625-63.4369354,11.0795841-93.6109161l229.7666931,74.6559448L26.3318462,351.2705994z M351.2970276,26.3452911c57.0869751,29.0958824,100.2769775,79.6774521,120.0699768,140.6184082l-229.7759705,74.6269531L351.2970276,26.3452911z M483.1820068,241.5906525c0,38.1259613-9.0229797,75.7099457-26.3320007,109.6799469c-17.3089905,33.9699707-42.4109802,63.3619385-73.2550049,85.7709351l-142.0039673-195.450882H483.1820068z M316.2470093,471.3575134c-48.5220032,15.7659912-100.789978,15.7659912-149.3119812,0l74.6560059-229.766861L316.2470093,471.3575134z M99.5873413,437.0415344c-20.5098038-14.901001-38.546299-32.9370117-53.4475975-53.4469604l195.4512939-142.0039215L99.5873413,437.0415344z"/></symbol>
+</svg>
+
+<div class="deck-viewport" id="deckViewport">
+<div class="divider-veil" aria-hidden="true"></div>
+<div class="ov-spacer" id="ovSpacer" aria-hidden="true"></div>
+<main class="deck-stage" id="deckStage">
+
+<!-- ══════════════════════════ AUTHORING CONVENTIONS ══════════════════════════
+     * Every slide is a <section class="slide"> with a UNIQUE aria-label; agenda
+       rows deep-link by aria-label (data-target="Chapter 1" finds the slide with
+       aria-label="Chapter 1"), so labels must stay unique even after reordering.
+     * data-chapter="…" feeds the fixed footer, bottom-left. Omit on title/dividers.
+     * <!- - notes: … - -> comments above a slide are speaker notes.
+     * Author everything at 1920×1080; the stage scales to fit the window.
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+<!-- notes: One sentence of welcome, then the promise: what the audience will be
+     able to do when this talk is over. -->
+<section class="slide s-title active" aria-label="Title">
+  <div class="slide-inner">
+    <svg class="logo logo-title reveal"><use href="#brand-logo"/></svg>
+    <h1 class="reveal">A headline with a <span class="grad">gradient flourish</span></h1>
+    <p class="byline reveal">One-sentence byline: what this talk covers and why it matters to the room.</p>
+    <p class="keyhint reveal"><b>→</b> next / <b>←</b> back / <b>O</b> overview / <b>F</b> fullscreen / <b>T</b> theme / <b>E</b> edit</p>
+  </div>
+</section>
+
+<!-- notes: Rows deep-link to their chapter dividers; clicking one jumps there. -->
+<section class="slide" aria-label="Outcomes and agenda" data-chapter="Deck Title">
+  <div class="slide-inner">
+    <div>
+      <div class="kicker reveal">Intro</div>
+      <h1 class="reveal">Outcomes &amp; agenda</h1>
+    </div>
+    <div class="body">
+      <p class="lead reveal">The one-paragraph promise of this talk, with the <strong>key term</strong> bolded.</p>
+      <div class="agenda-list reveal">
+        <div class="agenda-item" data-target="Chapter 1"><span class="num">01</span><span class="label">The Setup</span><span class="hint">what the world looks like today, and why that's a problem</span></div>
+        <div class="agenda-item" data-target="Chapter 2"><span class="num">02</span><span class="label">The Detail</span><span class="hint">the idea up close: code, history, mechanics</span></div>
+        <div class="agenda-item" data-target="Chapter 3"><span class="num">03</span><span class="label">The Picture</span><span class="hint">how the pieces fit together, and what happens next</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" aria-label="Why this matters" data-chapter="Deck Title">
+  <div class="slide-inner">
+    <div>
+      <div class="kicker reveal">Before we start</div>
+      <h1 class="reveal">A lead paragraph and bullets</h1>
+    </div>
+    <div class="body">
+      <p class="lead reveal">The standard content slide: one lead sentence that frames the point, with the <strong>load-bearing phrase</strong> bolded.</p>
+      <ul class="bullets">
+        <li class="reveal"><strong>First point</strong>: the bold opener carries the claim, the rest explains it.</li>
+        <li class="reveal"><strong>Second point</strong>: keep each bullet to one line or two, never three.</li>
+        <li class="reveal"><strong>Third point</strong> with an inline code token: <span class="tok">(head args…)</span>.</li>
+        <li class="reveal">A quieter closing point <span class="dim">with a dimmed aside like this</span>.</li>
+      </ul>
+      <p class="caption reveal">A caption line below, with a <span class="hl">highlighted phrase</span> in the theme's quiet-accent color.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ CH 1, THE SETUP ══════════════════════════ -->
+
+<section class="slide s-divider" aria-label="Chapter 1">
+  <div class="slide-inner">
+    <div class="ch-num reveal">Chapter 01</div>
+    <div>
+      <h1 class="reveal">The Setup</h1>
+      <p class="ch-sub reveal">A one-line subtitle that lands the chapter's thesis.</p>
+    </div>
+    <div></div>
+  </div>
+</section>
+
+<section class="slide" aria-label="Three panels" data-chapter="01 / The Setup">
+  <div class="slide-inner">
+    <div>
+      <div class="kicker reveal">The Setup / 01</div>
+      <h1 class="reveal">Three panels, one accented</h1>
+    </div>
+    <div class="body">
+      <div class="cols three reveal">
+        <div class="panel">
+          <span class="p-kick">first angle</span>
+          <h3>Read it</h3>
+          <p>Two sentences on the first pillar. Keep the panels parallel in tone and length.</p>
+        </div>
+        <div class="panel">
+          <span class="p-kick">second angle</span>
+          <h3>Trust it</h3>
+          <p>Two sentences on the second pillar, with the <strong>key word</strong> bolded.</p>
+        </div>
+        <div class="panel accent">
+          <span class="p-kick">third angle</span>
+          <h3>Use it</h3>
+          <p>The accent panel is the one to remember; use at most one per slide.</p>
+        </div>
+      </div>
+      <p class="caption reveal ctr">A centered caption under the grid ties the <span class="hl">three panels</span> into one takeaway.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" aria-label="Comparison" data-chapter="01 / The Setup">
+  <div class="slide-inner">
+    <div>
+      <div class="kicker reveal">The Setup / 02</div>
+      <h1 class="reveal">Before vs after</h1>
+    </div>
+    <div class="body">
+      <div class="cols two reveal">
+        <div class="panel">
+          <span class="p-kick">the old way</span>
+          <h3>You write <em>how</em></h3>
+          <p>What the world looks like without the idea. Two sentences at most.</p>
+          <div class="verdict"><span class="no">✕ slow</span><span class="no">✕ opaque</span></div>
+        </div>
+        <div class="panel accent">
+          <span class="p-kick">the new way</span>
+          <h3>You write <em>what is true</em></h3>
+          <p>What the idea changes, with the <strong>mechanism</strong> bolded.</p>
+          <div class="verdict"><span class="yes">✓ fast</span><span class="yes">✓ auditable</span></div>
+        </div>
+      </div>
+      <p class="caption reveal">A caption that gives the audience a mental model for the comparison.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ CH 2, THE DETAIL ══════════════════════════ -->
+
+<section class="slide s-divider" aria-label="Chapter 2">
+  <div class="slide-inner">
+    <div class="ch-num reveal">Chapter 02</div>
+    <div>
+      <h1 class="reveal">The Detail</h1>
+      <p class="ch-sub reveal">The idea up close, one concept per slide.</p>
+    </div>
+    <div></div>
+  </div>
+</section>
+
+<!-- notes: Walk the code line by line, plain English first. The syn-head can carry
+     a right-aligned link: <a href="…" target="_blank" rel="noopener">open ↗</a>. -->
+<section class="slide" aria-label="Code panel" data-chapter="02 / The Detail">
+  <div class="slide-inner">
+    <div>
+      <div class="kicker reveal">The Detail / 01</div>
+      <h1 class="reveal">A code panel with bullets</h1>
+    </div>
+    <div class="body">
+      <div class="syn reveal">
+        <div class="syn-head"><span class="dot"></span>example.src</div>
+        <pre><code><span class="c">; token classes: c=comment s=state v=variable k=keyword n=number g=result</span>
+(<span class="k">rule</span> (answer <span class="v">$x</span>)
+      (input <span class="v">$x</span> <span class="n">42</span>))
+!(answer <span class="v">$who</span>)          <span class="g">; ⇒ $who = the-answer</span></code></pre>
+      </div>
+      <ul class="bullets">
+        <li class="reveal"><strong>One idea per line</strong>: the bullet restates what the code just showed.</li>
+        <li class="reveal">Keep code to <strong>8–10 lines</strong>; add <span class="tok">class="tight"</span> to the panel if it runs long.</li>
+        <li class="reveal">Every token color rides the theme, so it <strong>adapts to light mode</strong> too.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide" aria-label="Timeline" data-chapter="02 / The Detail">
+  <div class="slide-inner">
+    <div>
+      <div class="kicker reveal">The Detail / 02</div>
+      <h1 class="reveal">A timeline, ending hot</h1>
+    </div>
+    <div class="body">
+      <div class="timeline reveal">
+        <div class="t-item"><div class="t-year">1972</div><h3>Origin</h3><p>Where the idea was born, in one sentence.</p></div>
+        <div class="t-item"><div class="t-year">1980s</div><h3>Adoption</h3><p>Who picked it up and what they added.</p></div>
+        <div class="t-item"><div class="t-year">2020s</div><h3>Revival</h3><p>The modern turn that set up the present.</p></div>
+        <div class="t-item hot"><div class="t-year">Now</div><h3>This talk</h3><p>The <strong>hot item</strong> gets the gradient bar; use it for the present.</p></div>
+      </div>
+      <p class="caption reveal">A closing caption that says why the history <span class="hl">matters now</span>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ CH 3, THE PICTURE ══════════════════════════ -->
+
+<section class="slide s-divider" aria-label="Chapter 3">
+  <div class="slide-inner">
+    <div class="ch-num reveal">Chapter 03</div>
+    <div>
+      <h1 class="reveal">The Picture</h1>
+      <p class="ch-sub reveal">How the pieces fit together, and what happens next.</p>
+    </div>
+    <div></div>
+  </div>
+</section>
+
+<section class="slide" aria-label="Flow diagram" data-chapter="03 / The Picture">
+  <div class="slide-inner">
+    <div>
+      <div class="kicker reveal">The Picture / 01</div>
+      <h1 class="reveal">An HTML flow, boxes and arrows</h1>
+    </div>
+    <div class="body">
+      <div class="flow reveal">
+        <div class="fbox"><span class="fk">step 1</span><span class="fv">Collect</span><span class="fs">inputs arrive</span></div>
+        <span class="farr">→</span>
+        <div class="fbox hub"><span class="fk">step 2</span><span class="fv">Process</span><span class="fs">the hub box, quietly accented</span></div>
+        <span class="farr">→</span>
+        <div class="fbox"><span class="fk">step 3</span><span class="fv">Publish</span><span class="fs">results out</span></div>
+      </div>
+      <p class="caption reveal">The HTML flow suits linear pipelines; for anything spatial, use the SVG vocabulary on the next slide.</p>
+    </div>
+  </div>
+</section>
+
+<!-- notes: The .dg vocabulary: node / node-accent / node-hub / node-warn boxes,
+     tag + ttl + sub text stacks, chip pills, arrow / arrow-accent / arrow-warn
+     lines with ar-n / ar-a / ar-w markers, alabel edge labels, cap captions.
+     All of it rides the --dg-* tokens, so diagrams re-skin in light mode. -->
+<section class="slide" aria-label="SVG diagram" data-chapter="03 / The Picture">
+  <div class="slide-inner">
+    <div>
+      <div class="kicker reveal">The Picture / 02</div>
+      <h1 class="reveal">An SVG figure, theme-aware</h1>
+    </div>
+    <div class="body">
+      <svg class="dg reveal" viewBox="0 0 1620 440" style="width:1620px;height:440px" role="img" aria-label="A source node flows into a hub, which derives a result">
+        <rect class="node" x="40" y="90" width="380" height="220" rx="22"/>
+        <text class="tag" x="230" y="140">input</text>
+        <text class="ttl" x="230" y="192">Source</text>
+        <text class="sub" x="230" y="228">where the data starts</text>
+        <rect class="chip" x="130" y="252" width="200" height="40" rx="10"/>
+        <text class="mono mono-c" x="230" y="278">raw-feed</text>
+        <line class="arrow" x1="430" y1="200" x2="630" y2="200" marker-end="url(#ar-n)"/>
+        <text class="alabel alabel-dim" x="530" y="182">flows</text>
+        <rect class="node-hub" x="640" y="70" width="380" height="260" rx="22"/>
+        <text class="tag" x="830" y="126">engine</text>
+        <text class="ttl ttl-lg" x="830" y="186">The Hub</text>
+        <text class="sub" x="830" y="228">gradient stroke marks</text>
+        <text class="sub" x="830" y="256">the star of the figure</text>
+        <line class="arrow-accent" x1="1030" y1="200" x2="1230" y2="200" marker-end="url(#ar-a)"/>
+        <text class="alabel" x="1130" y="182">derives</text>
+        <rect class="node-accent" x="1240" y="90" width="340" height="220" rx="22"/>
+        <text class="tag" x="1410" y="140">output</text>
+        <text class="ttl" x="1410" y="192">Result</text>
+        <text class="sub" x="1410" y="228">the accent node says</text>
+        <text class="sub" x="1410" y="256">"look here"</text>
+        <text class="cap" x="810" y="412">A quiet centered caption inside the figure, for reading order.</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="slide" aria-label="Recap" data-chapter="03 / The Picture">
+  <div class="slide-inner">
+    <div>
+      <div class="kicker reveal">Chapter 03</div>
+      <h1 class="reveal">Recap</h1>
+    </div>
+    <div class="body">
+      <ul class="bullets">
+        <li class="reveal">First takeaway, <strong>bolded at the point of the claim</strong>.</li>
+        <li class="reveal">Second takeaway, <strong>one line each</strong>.</li>
+        <li class="reveal">Third takeaway → <strong>the consequence</strong>.</li>
+      </ul>
+      <div class="recap reveal">
+        <p>The recap card compresses the chapter into two sentences the audience can repeat to a colleague tomorrow.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide s-end" aria-label="Close">
+  <div class="slide-inner">
+    <svg class="logo logo-end reveal"><use href="#brand-logo"/></svg>
+    <h1 class="reveal">A closing line.<br>With a <span class="grad">gradient landing.</span></h1>
+    <p class="byline reveal">One sentence that restates the promise from the title slide, now earned.</p>
+    <p class="mono-note reveal">learn more: <a href="https://example.com" target="_blank" rel="noopener">example.com</a></p>
+    <p class="keyhint reveal">Questions</p>
+  </div>
+</section>
+
+</main>
+</div>
+
+<!-- ═══ deck chrome: progress bar, counter, theme toggle, edit mode ═══ -->
+<div class="progress" id="progress"></div>
+<div class="counter" id="counter">1 / 14</div>
+<div class="deck-foot" aria-hidden="true"><span id="footChapter"></span><svg class="logo"><use href="#brand-logo"/></svg></div>
+<button class="theme-toggle" id="themeToggle" title="Toggle light/dark (T)" aria-label="Toggle theme">◐</button>
+<div class="edit-hotzone" id="editHotzone"></div>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏️</button>
+<div class="save-toast" id="saveToast" aria-live="polite"></div>
+
+<script>
+/* per-deck localStorage namespace, derived from <title>, no key edits needed */
+const STORE_PREFIX = 'deck-' + document.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+/* ===========================================
+   SLIDE PRESENTATION CONTROLLER
+   Keyboard: ← → space pgup pgdn home end / T theme / E edit
+             F fullscreen / O overview (arrows select, Enter/click jumps)
+   Touch: swipe left/right / Wheel: throttled
+   =========================================== */
+class SlidePresentation {
+    constructor() {
+        this.slides = document.querySelectorAll('.slide');
+        this.stage = document.getElementById('deckStage');
+        this.progress = document.getElementById('progress');
+        this.counter = document.getElementById('counter');
+        this.currentSlide = 0;
+        this.isOverview = false;
+        this.isArrange = false;
+        this.cols = 1;
+        this.slides.forEach((s, i) => {
+            s.dataset.idx = i + 1;
+            s.addEventListener('click', () => {
+                if (this.isOverview && !this.isArrange) this.exitOverview(this.indexOf(s));
+            });
+        });
+        this.setupStageScale();
+        this.setupKeyboardNav();
+        this.setupTouchNav();
+        this.setupWheelNav();
+        this.setupArrangeDrag();
+        this.setupAgendaNav();
+        // deep-link support: #12 opens slide 12
+        const hash = parseInt(location.hash.slice(1), 10);
+        this.showSlide(isNaN(hash) ? 0 : hash - 1);
+    }
+    setupStageScale() {
+        this.applyStageTransform = () => {
+            if (this.isOverview) { this.layoutOverview(); return; }
+            const factor = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+            const x = (window.innerWidth - 1920 * factor) / 2;
+            const y = (window.innerHeight - 1080 * factor) / 2;
+            this.stage.style.transform = `translate(${x}px, ${y}px) scale(${factor})`;
+        };
+        this.applyStageTransform();
+        window.addEventListener('resize', this.applyStageTransform);
+    }
+    setupKeyboardNav() {
+        document.addEventListener('keydown', (e) => {
+            if (e.target.getAttribute && e.target.getAttribute('contenteditable')) return;
+            if (this.isOverview) {
+                switch (e.key) {
+                    case 'ArrowRight': e.preventDefault(); this.showSlide(this.currentSlide + 1); this.scrollToSelection(); break;
+                    case 'ArrowLeft': e.preventDefault(); this.showSlide(this.currentSlide - 1); this.scrollToSelection(); break;
+                    case 'ArrowDown': e.preventDefault(); this.showSlide(this.currentSlide + this.cols); this.scrollToSelection(); break;
+                    case 'ArrowUp': e.preventDefault(); this.showSlide(this.currentSlide - this.cols); this.scrollToSelection(); break;
+                    case 'Enter': case 'o': case 'O': e.preventDefault(); this.exitOverview(); break;
+                    case 'Escape': e.preventDefault(); this.isArrange ? this.toggleArrange() : this.exitOverview(); break;
+                    case 'e': case 'E': e.preventDefault(); this.toggleArrange(); break;
+                    case 't': case 'T': toggleTheme(); break;
+                    case 'f': case 'F': toggleFullscreen(); break;
+                }
+                return;
+            }
+            switch (e.key) {
+                case 'ArrowRight': case ' ': case 'PageDown': e.preventDefault(); this.next(); break;
+                case 'ArrowLeft': case 'PageUp': e.preventDefault(); this.prev(); break;
+                case 'Home': e.preventDefault(); this.showSlide(0); break;
+                case 'End': e.preventDefault(); this.showSlide(this.slides.length - 1); break;
+                case 't': case 'T': toggleTheme(); break;
+                case 'f': case 'F': toggleFullscreen(); break;
+                case 'o': case 'O': if (!document.body.classList.contains('editing')) this.enterOverview(); break;
+            }
+        });
+    }
+    setupTouchNav() {
+        let startX = null;
+        document.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            if (startX === null || this.isOverview) { startX = null; return; }
+            const dx = e.changedTouches[0].clientX - startX;
+            if (Math.abs(dx) > 60) (dx < 0 ? this.next() : this.prev());
+            startX = null;
+        }, { passive: true });
+    }
+    setupWheelNav() {
+        let lock = false;
+        document.addEventListener('wheel', (e) => {
+            if (document.body.classList.contains('editing') || this.isOverview) return;
+            if (lock || Math.abs(e.deltaY) < 24) return;
+            lock = true;
+            (e.deltaY > 0 ? this.next() : this.prev());
+            setTimeout(() => { lock = false; }, 520);
+        }, { passive: true });
+    }
+    /* --- agenda rows jump to their chapter divider; targets resolve by
+       aria-label at click time so reordering slides can't break them --- */
+    setupAgendaNav() {
+        document.querySelectorAll('.agenda-item[data-target]').forEach((item) => {
+            item.addEventListener('click', (e) => {
+                if (this.isOverview || document.body.classList.contains('editing')) return;
+                const target = document.querySelector(`.slide[aria-label="${item.dataset.target}"]`);
+                if (!target) return;
+                e.stopPropagation();
+                this.showSlide(this.indexOf(target));
+            });
+        });
+    }
+    /* --- overview mode: a width-fit grid of big thumbnails that
+       scrolls vertically; the stage is scaled once, the spacer div
+       gives the viewport its scrollable height --- */
+    enterOverview() {
+        this.isOverview = true;
+        document.body.classList.add('overview');
+        this.layoutOverview();
+        this.scrollToSelection('instant');
+    }
+    exitOverview(target = this.currentSlide) {
+        if (this.isArrange) this.toggleArrange();
+        this.isOverview = false;
+        document.body.classList.remove('overview');
+        this.slides.forEach((s) => { s.style.transform = ''; });
+        document.getElementById('deckViewport').scrollTop = 0;
+        this.applyStageTransform();
+        this.showSlide(target);
+    }
+    indexOf(el) { return Array.prototype.indexOf.call(this.slides, el); }
+    cellOf(i) {
+        return { x: (i % this.cols) * (1920 + this.ov.gap), y: Math.floor(i / this.cols) * (1080 + this.ov.gap) };
+    }
+    layoutOverview() {
+        const n = this.slides.length, gap = 100, margin = 40;
+        // big cards: ~3 columns on a full-width window, never fewer than 2
+        this.cols = Math.max(2, Math.round(window.innerWidth / 620));
+        const rows = Math.ceil(n / this.cols);
+        const gridW = this.cols * 1920 + (this.cols - 1) * gap;
+        const factor = (window.innerWidth - 2 * margin) / gridW;
+        const gridHpx = (rows * 1080 + (rows - 1) * gap) * factor;
+        this.ov = { factor, gap, margin };
+        this.stage.style.transform = `translate(${margin}px, ${margin}px) scale(${factor})`;
+        document.getElementById('ovSpacer').style.height = `${gridHpx + 2 * margin}px`;
+        this.order = Array.from(this.slides);
+        this.order.forEach((s, i) => {
+            const c = this.cellOf(i);
+            s.style.transform = `translate(${c.x}px, ${c.y}px)`;
+        });
+    }
+    /* --- arrange mode: E inside overview, then drag thumbnails to
+       reorder. The drop commits the new order to the DOM, so slide
+       numbering, navigation, and Ctrl+S export all follow. --- */
+    toggleArrange() {
+        this.isArrange = !this.isArrange;
+        document.body.classList.toggle('arrange', this.isArrange);
+        document.getElementById('editToggle').classList.toggle('active', this.isArrange);
+        if (this.isArrange) toast('Arrange mode: drag slides to reorder, E when done');
+    }
+    setupArrangeDrag() {
+        let dragEl = null, started = false, sx = 0, sy = 0, grabDX = 0, grabDY = 0;
+        // native HTML drag (selected text, images) would swallow our pointermoves
+        document.addEventListener('dragstart', (e) => { if (this.isArrange) e.preventDefault(); });
+        const toStage = (e) => {
+            const vp = document.getElementById('deckViewport');
+            return { x: (e.clientX - this.ov.margin) / this.ov.factor,
+                     y: (e.clientY + vp.scrollTop - this.ov.margin) / this.ov.factor };
+        };
+        document.addEventListener('pointerdown', (e) => {
+            if (!this.isOverview || !this.isArrange || e.button !== 0) return;
+            const el = e.target.closest('.slide');
+            if (!el) return;
+            dragEl = el; started = false; sx = e.clientX; sy = e.clientY;
+            const p = toStage(e), cell = this.cellOf(this.order.indexOf(el));
+            grabDX = p.x - cell.x; grabDY = p.y - cell.y;
+        });
+        document.addEventListener('pointermove', (e) => {
+            if (!dragEl) return;
+            if (!started && Math.hypot(e.clientX - sx, e.clientY - sy) < 8) return;
+            if (!started) { started = true; dragEl.classList.add('dragging'); }
+            e.preventDefault();
+            const p = toStage(e);
+            const dx = p.x - grabDX, dy = p.y - grabDY;
+            dragEl.style.transform = `translate(${dx}px, ${dy}px)`;
+            // target cell = the one under the dragged card's center
+            const c = Math.min(this.cols - 1, Math.max(0, Math.floor((dx + 960) / (1920 + this.ov.gap))));
+            const r = Math.max(0, Math.floor((dy + 540) / (1080 + this.ov.gap)));
+            const target = Math.min(this.order.length - 1, r * this.cols + c);
+            const from = this.order.indexOf(dragEl);
+            if (target !== from) {
+                this.order.splice(from, 1);
+                this.order.splice(target, 0, dragEl);
+                this.order.forEach((s, i) => {
+                    if (s === dragEl) return;
+                    const cell = this.cellOf(i);
+                    s.style.transform = `translate(${cell.x}px, ${cell.y}px)`;
+                });
+            }
+        });
+        const finish = () => {
+            if (!dragEl) return;
+            const el = dragEl; dragEl = null;
+            if (!started) return;
+            el.classList.remove('dragging');
+            this.commitOrder();
+        };
+        document.addEventListener('pointerup', finish);
+        document.addEventListener('pointercancel', finish);
+    }
+    commitOrder() {
+        const active = this.slides[this.currentSlide];
+        this.order.forEach((s) => this.stage.appendChild(s));
+        this.slides = this.stage.querySelectorAll('.slide');
+        this.slides.forEach((s, i) => { s.dataset.idx = i + 1; });
+        this.currentSlide = this.indexOf(active);
+        this.layoutOverview();
+        this.showSlide(this.currentSlide);
+        editor.persist();
+    }
+    scrollToSelection(behavior = 'smooth') {
+        const r = Math.floor(this.currentSlide / this.cols);
+        const rowTop = this.ov.margin + r * (1080 + this.ov.gap) * this.ov.factor;
+        const rowH = 1080 * this.ov.factor;
+        const top = Math.max(0, rowTop - (window.innerHeight - rowH) / 2);
+        document.getElementById('deckViewport').scrollTo({ top, behavior });
+    }
+    next() { this.showSlide(this.currentSlide + 1); }
+    prev() { this.showSlide(this.currentSlide - 1); }
+    showSlide(index) {
+        this.currentSlide = Math.max(0, Math.min(index, this.slides.length - 1));
+        this.slides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === this.currentSlide);
+            slide.classList.toggle('visible', i === this.currentSlide);
+        });
+        this.progress.style.width = `${((this.currentSlide + 1) / this.slides.length) * 100}%`;
+        this.counter.textContent = `${this.currentSlide + 1} / ${this.slides.length}`;
+        const active = this.slides[this.currentSlide];
+        document.body.classList.toggle('on-divider', active.classList.contains('s-divider'));
+        document.getElementById('footChapter').textContent = active.dataset.chapter || '';
+        history.replaceState(null, '', `#${this.currentSlide + 1}`);
+    }
+}
+const deck = new SlidePresentation();
+
+/* ===========================================
+   FULLSCREEN (F)
+   =========================================== */
+function toggleFullscreen() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+    else document.exitFullscreen?.();
+}
+
+/* ===========================================
+   THEME TOGGLE, dark (default) / light
+   =========================================== */
+function toggleTheme() {
+    document.body.classList.toggle('light');
+    try { localStorage.setItem(`${STORE_PREFIX}-theme`, document.body.classList.contains('light') ? 'light' : 'dark'); } catch (e) {}
+}
+document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+try { if (localStorage.getItem(`${STORE_PREFIX}-theme`) === 'light') document.body.classList.add('light'); } catch (e) {}
+
+/* save feedback toast */
+let toastTimer = null;
+function toast(msg) {
+    const el = document.getElementById('saveToast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
+}
+
+/* ===========================================
+   INLINE EDITING, hover top-left corner or press E,
+   click any text to edit, Ctrl/Cmd+S saves the file
+   =========================================== */
+const editor = {
+    isActive: false,
+    editableSelector: 'h1, h3, p, li, .kicker, .syn code, .fbox, .agenda-item, .t-item, .ch-num, .ch-sub, .mono-note, .keyhint, .p-kick, .verdict, .syn-head, .counter',
+    toggleEditMode() {
+        this.isActive = !this.isActive;
+        document.body.classList.toggle('editing', this.isActive);
+        document.getElementById('editToggle').classList.toggle('active', this.isActive);
+        document.querySelectorAll(this.editableSelector).forEach((el) => {
+            if (this.isActive) el.setAttribute('contenteditable', 'true');
+            else el.removeAttribute('contenteditable');
+        });
+        if (!this.isActive) this.persist();
+    },
+    persist() {
+        try { localStorage.setItem(`${STORE_PREFIX}-edits`, document.getElementById('deckStage').innerHTML); } catch (e) {}
+    },
+    restore() {
+        try {
+            const saved = localStorage.getItem(`${STORE_PREFIX}-edits`);
+            if (saved) { /* offered but not auto-applied; uncomment to restore edits on load
+                document.getElementById('deckStage').innerHTML = saved; */ }
+        } catch (e) {}
+    },
+    saveFile() {
+        // strip editing/overview state, serialize the current DOM into a standalone
+        // file, and download it (browsers can't overwrite a local file from pure HTML)
+        if (deck.isOverview) deck.exitOverview();
+        const wasActive = this.isActive;
+        if (wasActive) this.toggleEditMode();
+        const t = document.getElementById('saveToast');
+        t.textContent = ''; t.classList.remove('show');
+        const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+        const blob = new Blob([html], { type: 'text/html' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = decodeURIComponent(location.pathname.split('/').pop()) || 'deck.html';
+        a.click();
+        URL.revokeObjectURL(a.href);
+        toast('Saved a copy to your downloads');
+        if (wasActive) this.toggleEditMode();
+    }
+};
+document.getElementById('editToggle').addEventListener('click', () => {
+    deck.isOverview ? deck.toggleArrange() : editor.toggleEditMode();
+});
+const hotzone = document.getElementById('editHotzone');
+const editToggle = document.getElementById('editToggle');
+let hideTimeout = null;
+hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); editToggle.classList.add('show'); });
+hotzone.addEventListener('mouseleave', () => {
+    hideTimeout = setTimeout(() => { if (!editor.isActive) editToggle.classList.remove('show'); }, 400);
+});
+editToggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+editToggle.addEventListener('mouseleave', () => {
+    hideTimeout = setTimeout(() => { if (!editor.isActive) editToggle.classList.remove('show'); }, 400);
+});
+document.addEventListener('keydown', (e) => {
+    if ((e.key === 'e' || e.key === 'E') && !(e.target.getAttribute && e.target.getAttribute('contenteditable'))
+        && !document.body.classList.contains('overview')) {
+        editor.toggleEditMode();
+    }
+    if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); editor.saveFile(); }
+});
+document.addEventListener('input', (e) => { if (editor.isActive) editor.persist(); });
+</script>
+</body>
+</html>

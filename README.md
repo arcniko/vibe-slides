@@ -42,10 +42,11 @@ Then use `/vibe-slides` in Claude Code.
 
 ## Included templates
 
-Two ready-to-use templates with assets (logos, patterns, SVGs):
+Three ready-to-use templates:
 
 - **Archon** — Deep-tech cinematic with corporate polish. Dark midnight blue, neon green accents, glass-morphism cards, triangle mosaics.
 - **Archon Noir** — Minimalist near-black variant of Archon. Geist typography, restrained green accent reserved for signals, numbered bullets, full-width SVG diagram slides.
+- **Sky Sunset** — Night-sky-at-dusk deck with a warm sunset gradient and a full light skin (T toggles). Fixed 1920×1080 stage scaled to fit, overview grid with drag-to-reorder, inline editing with Ctrl+S export, themed SVG diagram vocabulary.
 
 ## Credits
 
