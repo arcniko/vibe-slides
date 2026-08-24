@@ -1049,6 +1049,9 @@
                 /* Read initial slide from URL hash */
                 const hashSlide = parseInt(location.hash.replace('#', ''), 10);
                 const startSlide = (hashSlide >= 1 && hashSlide <= this.totalSlides) ? hashSlide - 1 : 0;
+                /* Clear the markup's hard-coded active/visible so a hash deep-link
+                   doesn't leave slide 0 superimposed on the target slide */
+                this.slides.forEach(s => s.classList.remove('active', 'visible'));
                 this.slides[startSlide].classList.add('active', 'visible');
                 this.currentSlide = startSlide;
                 this.updateActiveDot();
